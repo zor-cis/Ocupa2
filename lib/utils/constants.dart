@@ -7,4 +7,8 @@ class ApiConstants {
   static const String me = '$baseUrl/me';
   static const String updateProfile = '$baseUrl/me/profile';
   static const String updatePassword = '$baseUrl/me/password';
+
+  static const String offers = '$baseUrl/offers';
+  static String offerDetail(int id) => '$offers/$id';
+  static String applyToOffer(int id) => '$offers/$id/apply';
 }
