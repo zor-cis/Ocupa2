@@ -9,6 +9,6 @@ class ApiConstants {
   static const String updatePassword = '$baseUrl/me/password';
 
   static const String offers = '$baseUrl/offers';
-  static String offerDetail(int id) => '$offers/$id';
-  static String applyToOffer(int id) => '$offers/$id/apply';
+  static String offerDetail(String id) => '$offers/$id';
+  static String applyToOffer(String id) => '$offers/$id/apply';
 }
