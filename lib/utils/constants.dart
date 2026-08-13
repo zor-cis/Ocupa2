@@ -1,0 +1,10 @@
+class ApiConstants {
+  static const String baseUrl = 'https://ocupa2.ia3x.com/apix';
+
+  static const String register = '$baseUrl/auth/register';
+  static const String login = '$baseUrl/auth/login';
+  static const String forgotPassword = '$baseUrl/auth/forgot-password';
+  static const String me = '$baseUrl/me';
+  static const String updateProfile = '$baseUrl/me/profile';
+  static const String updatePassword = '$baseUrl/me/password';
+}
