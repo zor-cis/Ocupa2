@@ -10,18 +10,60 @@ double _aDouble(dynamic v) {
   return double.tryParse(v.toString()) ?? 0;
 }
 
-/// Tipo de trabajo del catálogo (GET /job-types).
-class JobTypeModel {
+/// Campo extra que exige un tipo de trabajo (ej. categoría de licencia).
+class CustomFieldModel {
   final String key;
   final String label;
+  final String type; // select | text | number...
+  final bool required;
+  final List<String> options;
 
-  JobTypeModel({required this.key, required this.label});
+  CustomFieldModel({
+    required this.key,
+    required this.label,
+    required this.type,
+    this.required = false,
+    this.options = const [],
+  });
+
+  factory CustomFieldModel.fromJson(Map<String, dynamic> json) {
+    return CustomFieldModel(
+      key: (json['key'] ?? '').toString(),
+      label: (json['label'] ?? json['key'] ?? '').toString(),
+      type: (json['type'] ?? 'text').toString(),
+      required: json['required'] == true,
+      options: (json['options'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+    );
+  }
+}
+
+/// Tipo de trabajo del catálogo (GET /job-types).
+class JobTypeModel {
+  final String id;
+  final String key;
+  final String name;
+  final bool active;
+  final List<CustomFieldModel> customFields;
+
+  JobTypeModel({
+    required this.id,
+    required this.key,
+    required this.name,
+    this.active = true,
+    this.customFields = const [],
+  });
 
   factory JobTypeModel.fromJson(Map<String, dynamic> json) {
-    final key = (json['key'] ?? json['jobTypeKey'] ?? json['id'] ?? '').toString();
+    final key = (json['key'] ?? '').toString();
     return JobTypeModel(
+      id: (json['id'] ?? '').toString(),
       key: key,
-      label: (json['label'] ?? json['name'] ?? json['nombre'] ?? key).toString(),
+      name: (json['name'] ?? json['label'] ?? key).toString(),
+      active: json['active'] != false,
+      customFields: (json['customFields'] as List?)
+              ?.map((e) => CustomFieldModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
   }
 }
@@ -30,7 +72,7 @@ class JobTypeModel {
 class OfertaModel {
   final String id;
   final String jobTypeKey;
-  final String? jobTypeLabel;
+  final String? jobTypeName;
   final String contractType; // temporal | fijo | horas
   final String description;
   final String? address;
@@ -47,7 +89,7 @@ class OfertaModel {
   OfertaModel({
     required this.id,
     required this.jobTypeKey,
-    this.jobTypeLabel,
+    this.jobTypeName,
     required this.contractType,
     required this.description,
     this.address,
@@ -70,7 +112,7 @@ class OfertaModel {
     return OfertaModel(
       id: (json['id'] ?? json['_id'] ?? '').toString(),
       jobTypeKey: (json['jobTypeKey'] ?? jobType?['key'] ?? '').toString(),
-      jobTypeLabel: (jobType?['label'] ?? jobType?['name'])?.toString(),
+      jobTypeName: (jobType?['name'] ?? jobType?['label'])?.toString(),
       contractType: (json['contractType'] ?? '').toString(),
       description: (json['description'] ?? '').toString(),
       address: json['address']?.toString(),
@@ -83,8 +125,9 @@ class OfertaModel {
           ? null
           : DateTime.tryParse(json['deadline'].toString()),
       status: json['status']?.toString(),
-      totalApplications: _aInt(
-          json['applicationsCount'] ?? json['totalApplications'] ?? json['applications']),
+      totalApplications: _aInt(json['applicationsCount'] ??
+          json['totalApplications'] ??
+          json['applications']),
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.tryParse(json['createdAt'].toString()),
@@ -93,10 +136,11 @@ class OfertaModel {
 
   bool get activa => status == null || status!.toLowerCase() == 'active';
 
-  String get montoTexto =>
-      currency == 'USD' ? 'US\$ ${amount.toStringAsFixed(0)}' : 'RD\$ ${amount.toStringAsFixed(0)}';
+  String get montoTexto => currency == 'USD'
+      ? 'US\$ ${amount.toStringAsFixed(0)}'
+      : 'RD\$ ${amount.toStringAsFixed(0)}';
 
-  String get tipoTexto => jobTypeLabel ?? jobTypeKey;
+  String get tipoTexto => jobTypeName ?? jobTypeKey;
 
   String get estadoTexto => activa ? 'Activa' : 'Desactivada';
 }
@@ -133,7 +177,7 @@ class AplicacionModel {
       id: (json['id'] ?? json['_id'] ?? '').toString(),
       userId: (user?['id'] ?? json['userId'])?.toString(),
       nombre: nombre.isEmpty
-          ? (user?['email'] ?? json['email'] ?? 'Candidato').toString()
+          ? (user?['nombre'] ?? user?['email'] ?? json['email'] ?? 'Candidato').toString()
           : nombre,
       foto: (user?['photo'] ?? json['photo'])?.toString(),
       comment: json['comment']?.toString(),

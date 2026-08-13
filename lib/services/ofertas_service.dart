@@ -58,10 +58,12 @@ class OfertasService {
   // ---------- Catálogo ----------
 
   Future<List<JobTypeModel>> jobTypes() async {
-    final response = await http.get(Uri.parse(ApiConstants.jobTypes), headers: await _headers());
+    final response =
+        await http.get(Uri.parse(ApiConstants.jobTypes), headers: await _headers());
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
     return _comoLista(_unwrap(jsonDecode(response.body)))
         .map(JobTypeModel.fromJson)
+        .where((t) => t.active)
         .toList();
   }
 
@@ -86,7 +88,7 @@ class OfertasService {
 
   // ---------- Paso 2: cobrar ----------
 
-  /// Cobra US$1 con la pasarela simulada. Devuelve el paymentId aprobado.
+  /// Cobra US$1 con la pasarela simulada. Devuelve el pago con su id.
   Future<PagoModel> cobrarTarjeta({
     required String cardNumber,
     required String cvv,
@@ -111,9 +113,12 @@ class OfertasService {
   }
 
   Future<List<PagoModel>> misPagos() async {
-    final response = await http.get(Uri.parse(ApiConstants.misPagos), headers: await _headers());
+    final response =
+        await http.get(Uri.parse(ApiConstants.misPagos), headers: await _headers());
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body))).map(PagoModel.fromJson).toList();
+    return _comoLista(_unwrap(jsonDecode(response.body)))
+        .map(PagoModel.fromJson)
+        .toList();
   }
 
   // ---------- Paso 3: crear la oferta ----------
@@ -130,6 +135,7 @@ class OfertasService {
     double? lat,
     double? lng,
     DateTime? deadline,
+    Map<String, String>? customAnswers,
   }) async {
     final response = await http.post(
       Uri.parse(ApiConstants.ofertas),
@@ -143,8 +149,9 @@ class OfertasService {
         'paymentId': paymentId,
         'payment': {'amount': amount, 'currency': currency},
         if (lat != null && lng != null) 'location': {'lat': lat, 'lng': lng},
-        if (deadline != null)
-          'deadline': deadline.toIso8601String().split('T').first,
+        if (deadline != null) 'deadline': deadline.toIso8601String().split('T').first,
+        if (customAnswers != null && customAnswers.isNotEmpty)
+          'customAnswers': customAnswers,
       }),
     );
 
@@ -155,9 +162,12 @@ class OfertasService {
   // ---------- Mis ofertas ----------
 
   Future<List<OfertaModel>> misOfertas() async {
-    final response = await http.get(Uri.parse(ApiConstants.misOfertas), headers: await _headers());
+    final response =
+        await http.get(Uri.parse(ApiConstants.misOfertas), headers: await _headers());
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body))).map(OfertaModel.fromJson).toList();
+    return _comoLista(_unwrap(jsonDecode(response.body)))
+        .map(OfertaModel.fromJson)
+        .toList();
   }
 
   Future<List<AplicacionModel>> aplicantes(String ofertaId) async {
@@ -166,7 +176,9 @@ class OfertasService {
       headers: await _headers(),
     );
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body))).map(AplicacionModel.fromJson).toList();
+    return _comoLista(_unwrap(jsonDecode(response.body)))
+        .map(AplicacionModel.fromJson)
+        .toList();
   }
 
   Future<void> desactivarOferta(String ofertaId) async {
