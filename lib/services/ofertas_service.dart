@@ -7,21 +7,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/oferta_model.dart';
 import '../utils/constants.dart';
 
-/// Toda la red del módulo 4: publicar, pagar, mis ofertas, aplicantes y ganador.
-/// Sigue el mismo patrón que AuthService: token desde SharedPreferences,
-/// header Bearer, y respuesta envuelta en {"ok": true, "data": {...}}.
+/// Módulo 4: publicar, pagar, mis ofertas, aplicantes.
+///
+/// Flujo real de publicación (confirmado en Swagger):
+///   1. subirFoto()      -> URL de la imagen
+///   2. cobrarTarjeta()  -> paymentId aprobado
+///   3. crearOferta()    -> usa ambos
 class OfertasService {
   // ---------- Helpers ----------
 
-  Future<String?> _getToken() async {
+  Future<Map<String, String>> _headers() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
-  }
-
-  Future<Map<String, String>> _headers({bool json = true}) async {
-    final token = await _getToken();
+    final token = prefs.getString('token');
     return {
-      if (json) 'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
@@ -48,7 +47,7 @@ class OfertasService {
   List<Map<String, dynamic>> _comoLista(dynamic data) {
     if (data is List) return data.cast<Map<String, dynamic>>();
     if (data is Map<String, dynamic>) {
-      for (final clave in ['items', 'ofertas', 'aplicaciones', 'pagos', 'results']) {
+      for (final clave in ['items', 'offers', 'applications', 'payments', 'results']) {
         final v = data[clave];
         if (v is List) return v.cast<Map<String, dynamic>>();
       }
@@ -56,67 +55,54 @@ class OfertasService {
     return [];
   }
 
-  // ---------- Publicar ----------
+  // ---------- Catálogo ----------
 
-  Future<OfertaModel> crearOferta({
-    required String titulo,
-    required String descripcion,
-    required String categoria,
-    required double pago,
-    required String ubicacion,
-    double? latitud,
-    double? longitud,
-    File? imagen,
-  }) async {
-    if (imagen == null) {
-      final response = await http.post(
-        Uri.parse(ApiConstants.ofertas),
-        headers: await _headers(),
-        body: jsonEncode({
-          'titulo': titulo,
-          'descripcion': descripcion,
-          'categoria': categoria,
-          'pago': pago,
-          'ubicacion': ubicacion,
-          if (latitud != null) 'latitud': latitud,
-          if (longitud != null) 'longitud': longitud,
-        }),
-      );
-
-      if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-      return OfertaModel.fromJson(_unwrap(jsonDecode(response.body)));
-    }
-
-    // Con imagen: multipart. 'imagen' debe coincidir con el Swagger.
-    final request = http.MultipartRequest('POST', Uri.parse(ApiConstants.ofertas));
-    request.headers.addAll(await _headers(json: false));
-    request.fields.addAll({
-      'titulo': titulo,
-      'descripcion': descripcion,
-      'categoria': categoria,
-      'pago': pago.toString(),
-      'ubicacion': ubicacion,
-      if (latitud != null) 'latitud': latitud.toString(),
-      if (longitud != null) 'longitud': longitud.toString(),
-    });
-    request.files.add(await http.MultipartFile.fromPath('imagen', imagen.path));
-
-    final streamed = await request.send();
-    final response = await http.Response.fromStream(streamed);
-
+  Future<List<JobTypeModel>> jobTypes() async {
+    final response = await http.get(Uri.parse(ApiConstants.jobTypes), headers: await _headers());
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return OfertaModel.fromJson(_unwrap(jsonDecode(response.body)));
+    return _comoLista(_unwrap(jsonDecode(response.body)))
+        .map(JobTypeModel.fromJson)
+        .toList();
   }
 
-  // ---------- Pago ----------
+  // ---------- Paso 1: subir foto ----------
 
-  Future<PagoModel> pagarPublicacion(int ofertaId, {String metodo = 'tarjeta'}) async {
+  /// Sube la imagen en base64 y devuelve su URL pública.
+  Future<String> subirFoto(File imagen) async {
+    final bytes = await imagen.readAsBytes();
+    final base64Image = base64Encode(bytes);
+    final nombre = imagen.path.split(Platform.pathSeparator).last;
+
     final response = await http.post(
-      Uri.parse(ApiConstants.pagarOferta(ofertaId)),
+      Uri.parse(ApiConstants.uploads),
+      headers: await _headers(),
+      body: jsonEncode({'image': base64Image, 'filename': nombre}),
+    );
+
+    if (response.statusCode >= 400) throw Exception(_errorMessage(response));
+    final data = _unwrap(jsonDecode(response.body));
+    return data['url'].toString();
+  }
+
+  // ---------- Paso 2: cobrar ----------
+
+  /// Cobra US$1 con la pasarela simulada. Devuelve el paymentId aprobado.
+  Future<PagoModel> cobrarTarjeta({
+    required String cardNumber,
+    required String cvv,
+    required int expMonth,
+    required int expYear,
+    required String cardholder,
+  }) async {
+    final response = await http.post(
+      Uri.parse(ApiConstants.pagos),
       headers: await _headers(),
       body: jsonEncode({
-        'monto': ApiConstants.costoPublicacion,
-        'metodo': metodo,
+        'cardNumber': cardNumber.replaceAll(' ', ''),
+        'cvv': cvv,
+        'expMonth': expMonth,
+        'expYear': expYear,
+        'cardholder': cardholder,
       }),
     );
 
@@ -124,60 +110,80 @@ class OfertasService {
     return PagoModel.fromJson(_unwrap(jsonDecode(response.body)));
   }
 
-  Future<List<PagoModel>> historialPagos() async {
-    final response = await http.get(
-      Uri.parse(ApiConstants.pagos),
+  Future<List<PagoModel>> misPagos() async {
+    final response = await http.get(Uri.parse(ApiConstants.misPagos), headers: await _headers());
+    if (response.statusCode >= 400) throw Exception(_errorMessage(response));
+    return _comoLista(_unwrap(jsonDecode(response.body))).map(PagoModel.fromJson).toList();
+  }
+
+  // ---------- Paso 3: crear la oferta ----------
+
+  Future<OfertaModel> crearOferta({
+    required String jobTypeKey,
+    required String contractType,
+    required String description,
+    required String address,
+    required String photoUrl,
+    required String paymentId,
+    required double amount,
+    String currency = 'DOP',
+    double? lat,
+    double? lng,
+    DateTime? deadline,
+  }) async {
+    final response = await http.post(
+      Uri.parse(ApiConstants.ofertas),
       headers: await _headers(),
+      body: jsonEncode({
+        'jobTypeKey': jobTypeKey,
+        'contractType': contractType,
+        'description': description,
+        'address': address,
+        'photo': photoUrl,
+        'paymentId': paymentId,
+        'payment': {'amount': amount, 'currency': currency},
+        if (lat != null && lng != null) 'location': {'lat': lat, 'lng': lng},
+        if (deadline != null)
+          'deadline': deadline.toIso8601String().split('T').first,
+      }),
     );
 
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body)))
-        .map(PagoModel.fromJson)
-        .toList();
+    return OfertaModel.fromJson(_unwrap(jsonDecode(response.body)));
   }
 
   // ---------- Mis ofertas ----------
 
   Future<List<OfertaModel>> misOfertas() async {
-    final response = await http.get(
-      Uri.parse(ApiConstants.misOfertas),
-      headers: await _headers(),
-    );
-
+    final response = await http.get(Uri.parse(ApiConstants.misOfertas), headers: await _headers());
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body)))
-        .map(OfertaModel.fromJson)
-        .toList();
+    return _comoLista(_unwrap(jsonDecode(response.body))).map(OfertaModel.fromJson).toList();
   }
 
-  Future<List<AplicacionModel>> aplicantes(int ofertaId) async {
+  Future<List<AplicacionModel>> aplicantes(String ofertaId) async {
     final response = await http.get(
       Uri.parse(ApiConstants.aplicantesDeOferta(ofertaId)),
       headers: await _headers(),
     );
-
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body)))
-        .map(AplicacionModel.fromJson)
-        .toList();
+    return _comoLista(_unwrap(jsonDecode(response.body))).map(AplicacionModel.fromJson).toList();
   }
 
-  Future<void> elegirGanador(int ofertaId, int aplicacionId) async {
-    final response = await http.put(
+  Future<void> desactivarOferta(String ofertaId) async {
+    final response = await http.post(
+      Uri.parse(ApiConstants.desactivarOferta(ofertaId)),
+      headers: await _headers(),
+    );
+    if (response.statusCode >= 400) throw Exception(_errorMessage(response));
+  }
+
+  // TODO: el endpoint no aparece en el Swagger. Confirmar con el profesor.
+  Future<void> elegirGanador(String ofertaId, String aplicacionId) async {
+    final response = await http.post(
       Uri.parse(ApiConstants.elegirGanador(ofertaId)),
       headers: await _headers(),
-      body: jsonEncode({'aplicacion_id': aplicacionId}),
+      body: jsonEncode({'applicationId': aplicacionId}),
     );
-
-    if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-  }
-
-  Future<void> eliminarOferta(int ofertaId) async {
-    final response = await http.delete(
-      Uri.parse(ApiConstants.oferta(ofertaId)),
-      headers: await _headers(),
-    );
-
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
   }
 }

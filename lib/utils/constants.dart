@@ -9,19 +9,32 @@ class ApiConstants {
   static const String updateProfile = '$baseUrl/me/profile';
   static const String updatePassword = '$baseUrl/me/password';
 
-  // --- Ofertas (Persona 4) ---
-  // TODO: confirmar en https://ocupa2.ia3x.com/apix/docs
-  static const String ofertas = '$baseUrl/ofertas';
-  static const String misOfertas = '$baseUrl/ofertas/mias';
+  // --- Catálogo (compartido) ---
+  static const String jobTypes = '$baseUrl/job-types';
 
-  static String oferta(int id) => '$ofertas/$id';
-  static String aplicantesDeOferta(int id) => '$ofertas/$id/aplicaciones';
-  static String elegirGanador(int id) => '$ofertas/$id/ganador';
+  // --- Subida de imágenes (compartido) ---
+  static const String uploads = '$baseUrl/uploads';
+
+  // --- Ofertas (Persona 4) ---
+  static const String ofertas = '$baseUrl/offers';
+  static const String misOfertas = '$baseUrl/me/offers';
+
+  static String oferta(String id) => '$ofertas/$id';
+  static String desactivarOferta(String id) => '$ofertas/$id/deactivate';
+  static String aplicantesDeOferta(String id) => '$ofertas/$id/applications';
+
+  // TODO: no aparece en el Swagger. Preguntar al profesor si existe.
+  static String elegirGanador(String id) => '$ofertas/$id/winner';
 
   // --- Pagos (Persona 4) ---
-  static const String pagos = '$baseUrl/pagos';
-  static String pagarOferta(int id) => '$ofertas/$id/pago';
+  static const String pagos = '$baseUrl/payments';
+  static const String misPagos = '$baseUrl/me/payments';
 
-  /// Costo fijo de publicar una oferta.
+  /// Costo fijo de publicar una oferta (pasarela simulada).
   static const double costoPublicacion = 1.00;
+  static const String monedaPago = 'USD';
+
+  /// Tarjetas de prueba de la pasarela simulada.
+  static const String tarjetaAprobada = '4242424242424242';
+  static const String tarjetaRechazada = '4000000000000002';
 }

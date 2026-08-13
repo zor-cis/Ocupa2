@@ -1,11 +1,7 @@
-/// Lee un valor probando varios nombres de campo.
-/// Así el modelo aguanta si el API usa snake_case o inglés.
-T? _leer<T>(Map<String, dynamic> json, List<String> nombres) {
-  for (final n in nombres) {
-    final v = json[n];
-    if (v != null) return v as T?;
-  }
-  return null;
+int _aInt(dynamic v) {
+  if (v == null) return 0;
+  if (v is num) return v.toInt();
+  return int.tryParse(v.toString()) ?? 0;
 }
 
 double _aDouble(dynamic v) {
@@ -14,149 +10,175 @@ double _aDouble(dynamic v) {
   return double.tryParse(v.toString()) ?? 0;
 }
 
-int _aInt(dynamic v) {
-  if (v == null) return 0;
-  if (v is num) return v.toInt();
-  return int.tryParse(v.toString()) ?? 0;
+/// Tipo de trabajo del catálogo (GET /job-types).
+class JobTypeModel {
+  final String key;
+  final String label;
+
+  JobTypeModel({required this.key, required this.label});
+
+  factory JobTypeModel.fromJson(Map<String, dynamic> json) {
+    final key = (json['key'] ?? json['jobTypeKey'] ?? json['id'] ?? '').toString();
+    return JobTypeModel(
+      key: key,
+      label: (json['label'] ?? json['name'] ?? json['nombre'] ?? key).toString(),
+    );
+  }
 }
 
+/// Oferta de empleo. Los campos siguen el schema real del API.
 class OfertaModel {
-  final int id;
-  final String titulo;
-  final String descripcion;
-  final String? categoria;
-  final double pago;
-  final String? ubicacion;
-  final double? latitud;
-  final double? longitud;
-  final String? imagenUrl;
-  final String? estado;
-  final bool pagada;
-  final int totalAplicaciones;
-  final int? ganadorId;
-  final DateTime? fechaCreacion;
+  final String id;
+  final String jobTypeKey;
+  final String? jobTypeLabel;
+  final String contractType; // temporal | fijo | horas
+  final String description;
+  final String? address;
+  final String? photo;
+  final double? lat;
+  final double? lng;
+  final double amount;
+  final String currency;
+  final DateTime? deadline;
+  final String? status;
+  final int totalApplications;
+  final DateTime? createdAt;
 
   OfertaModel({
     required this.id,
-    required this.titulo,
-    required this.descripcion,
-    this.categoria,
-    required this.pago,
-    this.ubicacion,
-    this.latitud,
-    this.longitud,
-    this.imagenUrl,
-    this.estado,
-    this.pagada = false,
-    this.totalAplicaciones = 0,
-    this.ganadorId,
-    this.fechaCreacion,
+    required this.jobTypeKey,
+    this.jobTypeLabel,
+    required this.contractType,
+    required this.description,
+    this.address,
+    this.photo,
+    this.lat,
+    this.lng,
+    required this.amount,
+    this.currency = 'DOP',
+    this.deadline,
+    this.status,
+    this.totalApplications = 0,
+    this.createdAt,
   });
 
   factory OfertaModel.fromJson(Map<String, dynamic> json) {
-    final fecha =
-        _leer<dynamic>(json, ['fecha_creacion', 'fechaCreacion', 'created_at']);
-    final lat = _leer<dynamic>(json, ['latitud', 'lat', 'latitude']);
-    final lng = _leer<dynamic>(json, ['longitud', 'lng', 'longitude']);
-    final ganador = _leer<dynamic>(json, ['ganador_id', 'ganadorId', 'winner_id']);
+    final location = json['location'] as Map<String, dynamic>?;
+    final payment = json['payment'] as Map<String, dynamic>?;
+    final jobType = json['jobType'] as Map<String, dynamic>?;
 
     return OfertaModel(
-      id: _aInt(json['id']),
-      titulo: _leer<String>(json, ['titulo', 'title']) ?? '',
-      descripcion: _leer<String>(json, ['descripcion', 'description']) ?? '',
-      categoria: _leer<String>(json, ['categoria', 'category']),
-      pago: _aDouble(_leer<dynamic>(json, ['pago', 'monto', 'salario', 'payment'])),
-      ubicacion: _leer<String>(json, ['ubicacion', 'location', 'direccion']),
-      latitud: lat == null ? null : _aDouble(lat),
-      longitud: lng == null ? null : _aDouble(lng),
-      imagenUrl: _leer<String>(json, ['imagen', 'imagen_url', 'image', 'foto']),
-      estado: _leer<String>(json, ['estado', 'status']),
-      pagada: _leer<dynamic>(json, ['pagada', 'pagado', 'is_paid', 'paid']) == true,
-      totalAplicaciones: _aInt(_leer<dynamic>(
-          json, ['total_aplicaciones', 'totalAplicaciones', 'aplicaciones_count'])),
-      ganadorId: ganador == null ? null : _aInt(ganador),
-      fechaCreacion: fecha == null ? null : DateTime.tryParse(fecha.toString()),
+      id: (json['id'] ?? json['_id'] ?? '').toString(),
+      jobTypeKey: (json['jobTypeKey'] ?? jobType?['key'] ?? '').toString(),
+      jobTypeLabel: (jobType?['label'] ?? jobType?['name'])?.toString(),
+      contractType: (json['contractType'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      address: json['address']?.toString(),
+      photo: json['photo']?.toString(),
+      lat: location?['lat'] == null ? null : _aDouble(location!['lat']),
+      lng: location?['lng'] == null ? null : _aDouble(location!['lng']),
+      amount: _aDouble(payment?['amount'] ?? json['amount']),
+      currency: (payment?['currency'] ?? 'DOP').toString(),
+      deadline: json['deadline'] == null
+          ? null
+          : DateTime.tryParse(json['deadline'].toString()),
+      status: json['status']?.toString(),
+      totalApplications: _aInt(
+          json['applicationsCount'] ?? json['totalApplications'] ?? json['applications']),
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.tryParse(json['createdAt'].toString()),
     );
   }
 
-  bool get tieneGanador => ganadorId != null;
+  bool get activa => status == null || status!.toLowerCase() == 'active';
 
-  String get pagoTexto => 'RD\$ ${pago.toStringAsFixed(0)}';
+  String get montoTexto =>
+      currency == 'USD' ? 'US\$ ${amount.toStringAsFixed(0)}' : 'RD\$ ${amount.toStringAsFixed(0)}';
 
-  String get estadoTexto => pagada ? (estado ?? 'Publicada') : 'Pendiente de pago';
+  String get tipoTexto => jobTypeLabel ?? jobTypeKey;
+
+  String get estadoTexto => activa ? 'Activa' : 'Desactivada';
 }
 
+/// Aplicación de un candidato a una oferta.
 class AplicacionModel {
-  final int id;
-  final int usuarioId;
-  final String nombreUsuario;
-  final String? fotoUrl;
-  final String? mensaje;
+  final String id;
+  final String? userId;
+  final String nombre;
+  final String? foto;
+  final String? comment;
   final bool esGanador;
-  final DateTime? fecha;
+  final DateTime? createdAt;
 
   AplicacionModel({
     required this.id,
-    required this.usuarioId,
-    required this.nombreUsuario,
-    this.fotoUrl,
-    this.mensaje,
+    this.userId,
+    required this.nombre,
+    this.foto,
+    this.comment,
     this.esGanador = false,
-    this.fecha,
+    this.createdAt,
   });
 
   factory AplicacionModel.fromJson(Map<String, dynamic> json) {
-    // El nombre puede venir plano o dentro de un objeto "usuario".
-    final usuario = json['usuario'] as Map<String, dynamic>?;
-    final fecha = _leer<dynamic>(json, ['fecha', 'created_at']);
+    final user = (json['user'] ?? json['applicant']) as Map<String, dynamic>?;
+
+    final nombre = [
+      user?['firstName'] ?? json['firstName'],
+      user?['lastName'] ?? json['lastName'],
+    ].where((e) => e != null && e.toString().isNotEmpty).join(' ');
 
     return AplicacionModel(
-      id: _aInt(json['id']),
-      usuarioId: _aInt(_leer<dynamic>(json, ['usuario_id', 'usuarioId', 'user_id'])),
-      nombreUsuario:
-          _leer<String>(json, ['nombre_usuario', 'nombreUsuario', 'nombre']) ??
-              _leer<String>(usuario ?? {}, ['nombre', 'name', 'first_name']) ??
-              'Usuario',
-      fotoUrl: _leer<String>(json, ['foto', 'foto_url', 'avatar']) ??
-          _leer<String>(usuario ?? {}, ['foto', 'avatar']),
-      mensaje: _leer<String>(json, ['mensaje', 'message', 'comentario']),
-      esGanador:
-          _leer<dynamic>(json, ['es_ganador', 'esGanador', 'ganador', 'is_winner']) == true,
-      fecha: fecha == null ? null : DateTime.tryParse(fecha.toString()),
+      id: (json['id'] ?? json['_id'] ?? '').toString(),
+      userId: (user?['id'] ?? json['userId'])?.toString(),
+      nombre: nombre.isEmpty
+          ? (user?['email'] ?? json['email'] ?? 'Candidato').toString()
+          : nombre,
+      foto: (user?['photo'] ?? json['photo'])?.toString(),
+      comment: json['comment']?.toString(),
+      esGanador: json['isWinner'] == true || json['selected'] == true,
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.tryParse(json['createdAt'].toString()),
     );
   }
+
+  String get iniciales => nombre.trim().isEmpty ? '?' : nombre.trim()[0].toUpperCase();
 }
 
+/// Pago de la pasarela simulada.
 class PagoModel {
-  final int id;
-  final int? ofertaId;
-  final double monto;
-  final String? metodo;
-  final String? estado;
-  final DateTime? fecha;
+  final String id;
+  final double amount;
+  final String currency;
+  final String? status;
+  final String? last4;
+  final DateTime? createdAt;
 
   PagoModel({
     required this.id,
-    this.ofertaId,
-    required this.monto,
-    this.metodo,
-    this.estado,
-    this.fecha,
+    required this.amount,
+    this.currency = 'USD',
+    this.status,
+    this.last4,
+    this.createdAt,
   });
 
   factory PagoModel.fromJson(Map<String, dynamic> json) {
-    final fecha = _leer<dynamic>(json, ['fecha', 'created_at']);
-    final oferta = _leer<dynamic>(json, ['oferta_id', 'ofertaId']);
-
     return PagoModel(
-      id: _aInt(json['id']),
-      ofertaId: oferta == null ? null : _aInt(oferta),
-      monto: _aDouble(_leer<dynamic>(json, ['monto', 'amount'])),
-      metodo: _leer<String>(json, ['metodo', 'method']),
-      estado: _leer<String>(json, ['estado', 'status']),
-      fecha: fecha == null ? null : DateTime.tryParse(fecha.toString()),
+      id: (json['id'] ?? json['_id'] ?? '').toString(),
+      amount: _aDouble(json['amount']),
+      currency: (json['currency'] ?? 'USD').toString(),
+      status: json['status']?.toString(),
+      last4: (json['last4'] ?? json['cardLast4'])?.toString(),
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.tryParse(json['createdAt'].toString()),
     );
   }
 
-  String get montoTexto => 'US\$ ${monto.toStringAsFixed(2)}';
+  bool get aprobado => status == null || status!.toLowerCase().contains('approv');
+
+  String get montoTexto => 'US\$ ${amount.toStringAsFixed(2)}';
 }
