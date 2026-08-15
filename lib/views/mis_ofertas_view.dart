@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/oferta_model.dart';
 import '../providers/ofertas_provider.dart';
 import 'aplicantes_view.dart';
+import 'mis_pagos_view.dart';
 import 'publicar_oferta_view.dart';
 
 class MisOfertasView extends StatefulWidget {
@@ -64,7 +65,19 @@ class _MisOfertasViewState extends State<MisOfertasView> {
     final provider = context.watch<OfertasProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mis ofertas')),
+      appBar: AppBar(
+        title: const Text('Mis ofertas'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.receipt_long_outlined),
+            tooltip: 'Historial de pagos',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const MisPagosView()),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final creada = await Navigator.push<bool>(

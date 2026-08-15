@@ -9,6 +9,7 @@ import 'views/complete_profile_view.dart';
 import 'views/home_view.dart';
 import 'views/login_view.dart';
 import 'views/mis_ofertas_view.dart';
+import 'views/mis_pagos_view.dart';
 import 'views/offer_detail_view.dart';
 import 'views/offers_view.dart';
 import 'views/recover_password_view.dart';
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
 
           // Publicar y administrar (Persona 4)
           AppRoutes.misOfertas: (_) => const MisOfertasView(),
+          AppRoutes.misPagos: (_) => const MisPagosView(),
         },
       ),
     );
