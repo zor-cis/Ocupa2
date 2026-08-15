@@ -1,23 +1,17 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/offer.dart';
 import '../utils/constants.dart';
-import 'auth_service.dart';
 
 class OfferService {
-  final AuthService _authService = AuthService();
-
-  // Explorar ofertas
   Future<List<Offer>> getOffers({
     String? jobTypeKey,
     String? contractType,
   }) async {
-    final token = await _authService.getToken();
-
-    if (token == null) {
-      throw Exception('Sesión no encontrada');
-    }
+    final token = await _getToken();
 
     final queryParameters = <String, String>{};
 
@@ -30,8 +24,7 @@ class OfferService {
     }
 
     final uri = Uri.parse(ApiConstants.offers).replace(
-      queryParameters:
-          queryParameters.isEmpty ? null : queryParameters,
+      queryParameters: queryParameters,
     );
 
     final response = await http.get(
@@ -46,21 +39,15 @@ class OfferService {
     }
 
     final json = jsonDecode(response.body);
+    final data = json['data'];
 
-    final List<dynamic> data = json['data'];
-
-    return data
-        .map((offer) => Offer.fromJson(offer))
+    return (data as List)
+        .map((item) => Offer.fromJson(item))
         .toList();
   }
 
-  // Ver detalle de una oferta
   Future<Offer> getOfferDetail(String id) async {
-    final token = await _authService.getToken();
-
-    if (token == null) {
-      throw Exception('Sesión no encontrada');
-    }
+    final token = await _getToken();
 
     final response = await http.get(
       Uri.parse(ApiConstants.offerDetail(id)),
@@ -74,24 +61,28 @@ class OfferService {
     }
 
     final json = jsonDecode(response.body);
+    final data = json['data'] ?? json;
 
-    return Offer.fromJson(json['data']);
+    return Offer.fromJson(data);
   }
 
-  // Aplicar a una oferta
-  Future<void> applyToOffer(String id) async {
-    final token = await _authService.getToken();
-
-    if (token == null) {
-      throw Exception('Sesión no encontrada');
-    }
+  Future<void> applyToOffer(
+    String id,
+    String comment,
+    List<Map<String, dynamic>> answers,
+  ) async {
+    final token = await _getToken();
 
     final response = await http.post(
       Uri.parse(ApiConstants.applyToOffer(id)),
       headers: {
-        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
       },
+      body: jsonEncode({
+        'comment': comment,
+        'answers': answers,
+      }),
     );
 
     if (response.statusCode >= 400) {
@@ -99,12 +90,18 @@ class OfferService {
     }
   }
 
+  Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
   String _errorMessage(http.Response response) {
     try {
-      final data = jsonDecode(response.body);
+      final json = jsonDecode(response.body);
 
-      return data['message'] ??
-          data['error'] ??
+      return json['message'] ??
+          json['error'] ??
+          json['detail'] ??
           'Error del servidor';
     } catch (_) {
       return 'Error del servidor (${response.statusCode})';

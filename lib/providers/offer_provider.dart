@@ -4,7 +4,7 @@ import '../models/offer.dart';
 import '../services/offer_service.dart';
 
 class OfferProvider extends ChangeNotifier {
-final OfferService _offerService = OfferService();
+  final OfferService _offerService = OfferService();
 
   List<Offer> _offers = [];
   Offer? _selectedOffer;
@@ -21,7 +21,6 @@ final OfferService _offerService = OfferService();
 
   String? get errorMessage => _errorMessage;
 
-  // Explorar ofertas
   Future<bool> loadOffers({
     String? jobTypeKey,
     String? contractType,
@@ -65,13 +64,21 @@ final OfferService _offerService = OfferService();
     }
   }
 
-  Future<bool> applyToOffer(String id) async {
+  Future<bool> applyToOffer(
+    String id,
+    String comment,
+    List<Map<String, dynamic>> answers,
+  ) async {
     _isApplying = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _offerService.applyToOffer(id);
+      await _offerService.applyToOffer(
+        id,
+        comment,
+        answers,
+      );
 
       return true;
     } catch (e) {

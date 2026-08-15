@@ -15,6 +15,21 @@ class OfferDetailView extends StatefulWidget {
 class _OfferDetailViewState extends State<OfferDetailView> {
   String? _offerId;
 
+  final _commentController = TextEditingController();
+
+  final Map<String, TextEditingController> _answerControllers = {};
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+
+    for (final controller in _answerControllers.values) {
+      controller.dispose();
+    }
+
+    super.dispose();
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -32,12 +47,48 @@ class _OfferDetailViewState extends State<OfferDetailView> {
     });
   }
 
+  TextEditingController _getAnswerController(String questionId) {
+    return _answerControllers.putIfAbsent(
+      questionId,
+      () => TextEditingController(),
+    );
+  }
+
   Future<void> _apply() async {
     if (_offerId == null) return;
 
-    final provider = context.read<OfferProvider>();
+    final comment = _commentController.text.trim();
 
-    final success = await provider.applyToOffer(_offerId!);
+    if (comment.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Debes escribir un comentario para aplicar.'),
+        ),
+      );
+      return;
+    }
+
+    final provider = context.read<OfferProvider>();
+    final offer = provider.selectedOffer;
+
+    if (offer == null) return;
+
+    final answers = <Map<String, dynamic>>[];
+
+    for (final question in offer.questions) {
+      final controller = _answerControllers[question.id];
+
+      answers.add({
+        'questionId': question.id,
+        'value': controller?.text.trim() ?? '',
+      });
+    }
+
+    final success = await provider.applyToOffer(
+      _offerId!,
+      comment,
+      answers,
+    );
 
     if (!mounted) return;
 
@@ -47,6 +98,8 @@ class _OfferDetailViewState extends State<OfferDetailView> {
           content: Text('¡Aplicaste correctamente a la oferta!'),
         ),
       );
+
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -102,7 +155,7 @@ class _OfferDetailViewState extends State<OfferDetailView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Imagen de la oferta
+          // Imagen
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.network(
@@ -134,9 +187,9 @@ class _OfferDetailViewState extends State<OfferDetailView> {
                 ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
-          // Tipo de contrato
+          // Información
           _InfoRow(
             icon: Icons.work_outline,
             label: 'Contrato',
@@ -145,7 +198,6 @@ class _OfferDetailViewState extends State<OfferDetailView> {
 
           const SizedBox(height: 12),
 
-          // Ubicación
           _InfoRow(
             icon: Icons.location_on_outlined,
             label: 'Ubicación',
@@ -154,7 +206,6 @@ class _OfferDetailViewState extends State<OfferDetailView> {
 
           const SizedBox(height: 12),
 
-          // Pago
           _InfoRow(
             icon: Icons.payments_outlined,
             label: 'Pago',
@@ -191,12 +242,71 @@ class _OfferDetailViewState extends State<OfferDetailView> {
             const SizedBox(height: 24),
           ],
 
-          // Botón aplicar
+          // Formulario de aplicación
+          Text(
+            'Aplicar a esta oferta',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+
+          const SizedBox(height: 16),
+
+          TextFormField(
+            controller: _commentController,
+            maxLines: 4,
+            decoration: InputDecoration(
+              labelText: 'Comentario',
+              hintText: 'Escribe por qué estás interesado en esta oferta...',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              alignLabelWithHint: true,
+            ),
+          ),
+
+          // Preguntas
+          if (offer.questions.isNotEmpty) ...[
+            const SizedBox(height: 24),
+
+            Text(
+              'Preguntas de la oferta',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+
+            const SizedBox(height: 16),
+
+            ...offer.questions.map(
+              (question) {
+                final controller = _getAnswerController(question.id);
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: TextFormField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      labelText: question.label,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+
+          const SizedBox(height: 8),
+
           CustomButton(
             label: 'Aplicar',
             isLoading: provider.isApplying,
             onPressed: provider.isApplying ? null : _apply,
           ),
+
+          const SizedBox(height: 24),
         ],
       ),
     );
