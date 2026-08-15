@@ -22,7 +22,6 @@ class OfferCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagen de la oferta
             SizedBox(
               height: 180,
               width: double.infinity,
@@ -45,7 +44,6 @@ class OfferCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Tipo de trabajo
                   Text(
                     offer.jobTypeName,
                     style: const TextStyle(
@@ -56,7 +54,6 @@ class OfferCard extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  // Tipo de contrato
                   Row(
                     children: [
                       const Icon(
@@ -70,7 +67,6 @@ class OfferCard extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  // Dirección
                   Row(
                     children: [
                       const Icon(
@@ -90,7 +86,6 @@ class OfferCard extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  // Pago
                   Row(
                     children: [
                       const Icon(
@@ -111,7 +106,6 @@ class OfferCard extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // Descripción
                   Text(
                     offer.description,
                     maxLines: 2,
@@ -120,7 +114,6 @@ class OfferCard extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // Ver detalle
                   const Align(
                     alignment: Alignment.centerRight,
                     child: Row(

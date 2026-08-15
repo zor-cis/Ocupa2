@@ -179,7 +179,6 @@ class _OfferDetailViewState extends State<OfferDetailView> {
 
           const SizedBox(height: 20),
 
-          // Tipo de trabajo
           Text(
             offer.jobTypeName,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -189,7 +188,6 @@ class _OfferDetailViewState extends State<OfferDetailView> {
 
           const SizedBox(height: 16),
 
-          // Información
           _InfoRow(
             icon: Icons.work_outline,
             label: 'Contrato',
@@ -215,7 +213,6 @@ class _OfferDetailViewState extends State<OfferDetailView> {
 
           const SizedBox(height: 24),
 
-          // Descripción
           Text(
             'Descripción',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -232,7 +229,6 @@ class _OfferDetailViewState extends State<OfferDetailView> {
 
           const SizedBox(height: 24),
 
-          // Fecha límite
           if (offer.deadline != null) ...[
             _InfoRow(
               icon: Icons.calendar_today_outlined,
@@ -242,7 +238,6 @@ class _OfferDetailViewState extends State<OfferDetailView> {
             const SizedBox(height: 24),
           ],
 
-          // Formulario de aplicación
           Text(
             'Aplicar a esta oferta',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -265,7 +260,6 @@ class _OfferDetailViewState extends State<OfferDetailView> {
             ),
           ),
 
-          // Preguntas
           if (offer.questions.isNotEmpty) ...[
             const SizedBox(height: 24),
 
