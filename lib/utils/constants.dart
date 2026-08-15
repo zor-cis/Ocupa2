@@ -9,22 +9,29 @@ class ApiConstants {
   static const String updateProfile = '$baseUrl/me/profile';
   static const String updatePassword = '$baseUrl/me/password';
 
-  // --- Catálogo (compartido) ---
+  // --- Catalogo (compartido) ---
   static const String jobTypes = '$baseUrl/job-types';
 
-  // --- Subida de imágenes (compartido) ---
+  // --- Subida de imagenes (compartido) ---
   static const String uploads = '$baseUrl/uploads';
 
-  // --- Ofertas (Persona 4) ---
-  static const String ofertas = '$baseUrl/offers';
+  // --- Ofertas: base compartida ---
+  static const String offers = '$baseUrl/offers';
+  static String offerDetail(String id) => '$offers/$id';
+
+  // --- Explorar y aplicar (Persona 3) ---
+  static String applyToOffer(String id) => '$offers/$id/apply';
+
+  // --- Publicar y administrar (Persona 4) ---
+  static const String ofertas = offers;
   static const String misOfertas = '$baseUrl/me/offers';
 
-  static String oferta(String id) => '$ofertas/$id';
-  static String desactivarOferta(String id) => '$ofertas/$id/deactivate';
-  static String aplicantesDeOferta(String id) => '$ofertas/$id/applications';
+  static String oferta(String id) => offerDetail(id);
+  static String desactivarOferta(String id) => '$offers/$id/deactivate';
+  static String aplicantesDeOferta(String id) => '$offers/$id/applications';
 
   // TODO: no aparece en el Swagger. Preguntar al profesor si existe.
-  static String elegirGanador(String id) => '$ofertas/$id/winner';
+  static String elegirGanador(String id) => '$offers/$id/winner';
 
   // --- Pagos (Persona 4) ---
   static const String pagos = '$baseUrl/payments';
