@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/offer_provider.dart';
-
+import 'providers/ofertas_provider.dart';
 import 'utils/routes.dart';
-
 import 'views/complete_profile_view.dart';
 import 'views/home_view.dart';
 import 'views/login_view.dart';
+import 'views/mis_ofertas_view.dart';
 import 'views/offer_detail_view.dart';
 import 'views/offers_view.dart';
 import 'views/recover_password_view.dart';
@@ -32,6 +32,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => OfferProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => OfertasProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'Ocupa2',
@@ -51,9 +54,12 @@ class MyApp extends StatelessWidget {
           AppRoutes.completeProfile: (_) => const CompleteProfileView(),
           AppRoutes.home: (_) => const HomeView(),
 
-          // Ofertas
+          // Ofertas (Persona 3)
           AppRoutes.offers: (_) => const OffersView(),
           AppRoutes.offerDetail: (_) => const OfferDetailView(),
+
+          // Publicar y administrar (Persona 4)
+          AppRoutes.misOfertas: (_) => const MisOfertasView(),
         },
       ),
     );
