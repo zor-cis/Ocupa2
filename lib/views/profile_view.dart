@@ -21,7 +21,7 @@ class ProfileView extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundImage: const AssetImage('images/perfil.png'),
+                backgroundImage: const AssetImage('Images/perfil.png'),
                 backgroundColor: Colors.grey[200],
               ),
               const SizedBox(height: 24),
@@ -87,6 +87,13 @@ class ProfileView extends StatelessWidget {
                 title: const Text('Configuración'),
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.settings);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('Acerca de nosotros'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.aboutUs);
                 },
               ),
               const SizedBox(height: 24),

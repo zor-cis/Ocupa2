@@ -118,7 +118,7 @@ class HomeView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
-                      'images/perfil.png',
+                      'Images/perfil.png',
                       width: 28,
                       height: 28,
                     ),

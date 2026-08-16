@@ -10,6 +10,7 @@ import 'providers/payment_provider.dart';
 import 'utils/routes.dart';
 
 import 'views/add_experience_view.dart';
+import 'views/about_us_view.dart';
 import 'views/complete_profile_view.dart';
 import 'views/experience_detail_view.dart';
 import 'views/experiences_view.dart';
@@ -94,6 +95,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.personalData: (_) => const PersonalDataView(),
           AppRoutes.changePassword: (_) => const ChangePasswordView(),
           AppRoutes.settings: (_) => const SettingsView(),
+          AppRoutes.aboutUs: (_) => const AboutUsView(),
         },
       ),
     );

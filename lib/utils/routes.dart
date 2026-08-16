@@ -22,4 +22,5 @@ class AppRoutes {
   static const personalData = '/profile/personal-data';
   static const changePassword = '/profile/change-password';
   static const settings = '/profile/settings';
+  static const aboutUs = '/profile/about-us';
 }

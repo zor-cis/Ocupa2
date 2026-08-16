@@ -24,7 +24,7 @@ class PersonalDataView extends StatelessWidget {
                   Center(
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundImage: const AssetImage('images/perfil.png'),
+                      backgroundImage: const AssetImage('Images/perfil.png'),
                       backgroundColor: Colors.grey[200],
                     ),
                   ),
