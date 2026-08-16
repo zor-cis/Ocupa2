@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../models/application.dart';
 import '../models/offer.dart';
 import '../services/offer_service.dart';
 
@@ -7,6 +8,7 @@ class OfferProvider extends ChangeNotifier {
   final OfferService _offerService = OfferService();
 
   List<Offer> _offers = [];
+  List<Application> _myApplications = [];
   Offer? _selectedOffer;
 
   bool _isLoading = false;
@@ -14,6 +16,7 @@ class OfferProvider extends ChangeNotifier {
   String? _errorMessage;
 
   List<Offer> get offers => _offers;
+  List<Application> get myApplications => _myApplications;
   Offer? get selectedOffer => _selectedOffer;
 
   bool get isLoading => _isLoading;
@@ -54,6 +57,23 @@ class OfferProvider extends ChangeNotifier {
     try {
       _selectedOffer = await _offerService.getOfferDetail(id);
 
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> loadMyApplications() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _myApplications = await _offerService.getMyApplications();
       return true;
     } catch (e) {
       _errorMessage = e.toString();

@@ -8,4 +8,13 @@ class AppRoutes {
 
   static const offers = '/offers';
   static const offerDetail = '/offers/detail';
+  static const offersMap = '/offers/map';
+  static const guides = '/guides';
+  static const profile = '/profile';
+  static const myApplications = '/my-applications';
+  static const applicationDetail = '/my-applications/detail';
+  static const experiences = '/experiences';
+  static const addExperience = '/experiences/add';
+  static const myPayments = '/my-payments';
+  static const paymentDetail = '/my-payments/detail';
 }

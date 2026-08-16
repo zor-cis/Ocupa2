@@ -3,14 +3,26 @@ import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/offer_provider.dart';
+import 'providers/video_provider.dart';
+import 'providers/experience_provider.dart';
+import 'providers/payment_provider.dart';
 
 import 'utils/routes.dart';
 
+import 'views/add_experience_view.dart';
 import 'views/complete_profile_view.dart';
+import 'views/experiences_view.dart';
+import 'views/guides_view.dart';
 import 'views/home_view.dart';
 import 'views/login_view.dart';
+import 'views/my_application_detail_view.dart';
+import 'views/my_applications_view.dart';
+import 'views/my_payments_view.dart';
+import 'views/payment_detail_view.dart';
 import 'views/offer_detail_view.dart';
+import 'views/offers_map_view.dart';
 import 'views/offers_view.dart';
+import 'views/profile_view.dart';
 import 'views/recover_password_view.dart';
 import 'views/register_view.dart';
 import 'views/splash_view.dart';
@@ -31,6 +43,15 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => OfferProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => VideoProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ExperienceProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => PaymentProvider(),
         ),
       ],
       child: MaterialApp(
@@ -54,6 +75,15 @@ class MyApp extends StatelessWidget {
           // Ofertas
           AppRoutes.offers: (_) => const OffersView(),
           AppRoutes.offerDetail: (_) => const OfferDetailView(),
+          AppRoutes.offersMap: (_) => const OffersMapView(),
+          AppRoutes.guides: (_) => const GuidesView(),
+          AppRoutes.profile: (_) => const ProfileView(),
+          AppRoutes.myApplications: (_) => const MyApplicationsView(),
+          AppRoutes.applicationDetail: (_) => const MyApplicationDetailView(),
+          AppRoutes.experiences: (_) => const ExperiencesView(),
+          AppRoutes.addExperience: (_) => const AddExperienceView(),
+          AppRoutes.myPayments: (_) => const MyPaymentsView(),
+          AppRoutes.paymentDetail: (_) => const PaymentDetailView(),
         },
       ),
     );
