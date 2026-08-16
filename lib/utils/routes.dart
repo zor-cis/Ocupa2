@@ -6,6 +6,7 @@ class AppRoutes {
   static const completeProfile = '/complete-profile';
   static const home = '/home';
 
+  // --- Ofertas (Persona 3) ---
   static const offers = '/offers';
   static const offerDetail = '/offers/detail';
   static const offersMap = '/offers/map';
@@ -15,6 +16,13 @@ class AppRoutes {
   static const applicationDetail = '/my-applications/detail';
   static const experiences = '/experiences';
   static const addExperience = '/experiences/add';
+  static const experienceDetail = '/experiences/detail';
   static const myPayments = '/my-payments';
   static const paymentDetail = '/my-payments/detail';
+  static const likedOffers = '/liked-offers';
+
+  // --- Publicar y administrar (Persona 4) ---
+  static const misOfertas = '/mis-ofertas';
+  static const publicarOferta = '/publicar-oferta';
+  static const misPagos = '/mis-pagos';
 }
