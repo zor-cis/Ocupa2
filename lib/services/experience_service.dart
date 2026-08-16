@@ -1,38 +1,16 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/application.dart';
-import '../models/offer.dart';
+import '../models/experience.dart';
+import '../models/job_type.dart';
 import '../utils/constants.dart';
 
-class OfferService {
-  Future<List<Offer>> getOffers({
-    String? jobTypeKey,
-    String? contractType,
-  }) async {
+class ExperienceService {
+  Future<List<JobType>> getJobTypes() async {
     final token = await _getToken();
-
-    final queryParameters = <String, String>{};
-
-    if (jobTypeKey != null && jobTypeKey.isNotEmpty) {
-      queryParameters['jobTypeKey'] = jobTypeKey;
-    }
-
-    if (contractType != null && contractType.isNotEmpty) {
-      queryParameters['contractType'] = contractType;
-    }
-
-    final uri = Uri.parse(ApiConstants.offers).replace(
-      queryParameters: queryParameters,
-    );
-
     final response = await http.get(
-      uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      Uri.parse(ApiConstants.jobTypes),
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode >= 400) {
@@ -42,19 +20,18 @@ class OfferService {
     final json = jsonDecode(response.body);
     final data = json['data'];
 
+    if (data == null) return [];
+
     return (data as List)
-        .map((item) => Offer.fromJson(item))
+        .map((item) => JobType.fromJson(item))
         .toList();
   }
 
-  Future<Offer> getOfferDetail(String id) async {
+  Future<List<Experience>> getExperiences() async {
     final token = await _getToken();
-
     final response = await http.get(
-      Uri.parse(ApiConstants.offerDetail(id)),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      Uri.parse(ApiConstants.experiences),
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode >= 400) {
@@ -62,27 +39,33 @@ class OfferService {
     }
 
     final json = jsonDecode(response.body);
-    final data = json['data'] ?? json;
+    final data = json['data'];
 
-    return Offer.fromJson(data);
+    if (data == null) return [];
+
+    return (data as List)
+        .map((item) => Experience.fromJson(item))
+        .toList();
   }
 
-  Future<void> applyToOffer(
-    String id,
-    String comment,
-    List<Map<String, dynamic>> answers,
-  ) async {
+  Future<void> addExperience({
+    required String title,
+    required String description,
+    String? jobTypeKey,
+    String? certificateImage,
+  }) async {
     final token = await _getToken();
-
     final response = await http.post(
-      Uri.parse(ApiConstants.applyToOffer(id)),
+      Uri.parse(ApiConstants.experiences),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
       body: jsonEncode({
-        'comment': comment,
-        'answers': answers,
+        'title': title,
+        'description': description,
+        'jobTypeKey': jobTypeKey,
+        'certificateImage': certificateImage,
       }),
     );
 
@@ -91,30 +74,16 @@ class OfferService {
     }
   }
 
-  Future<List<Application>> getMyApplications() async {
+  Future<void> deleteExperience(String id) async {
     final token = await _getToken();
-
-    final response = await http.get(
-      Uri.parse(ApiConstants.myApplications),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+    final response = await http.delete(
+      Uri.parse('${ApiConstants.experiences}/$id'),
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode >= 400) {
       throw Exception(_errorMessage(response));
     }
-
-    final json = jsonDecode(response.body);
-    final data = json['data'];
-
-    if (data == null) {
-      return [];
-    }
-
-    return (data as List)
-        .map((item) => Application.fromJson(item))
-        .toList();
   }
 
   Future<String?> _getToken() async {
@@ -125,7 +94,6 @@ class OfferService {
   String _errorMessage(http.Response response) {
     try {
       final json = jsonDecode(response.body);
-
       return json['message'] ??
           json['error'] ??
           json['detail'] ??
