@@ -100,8 +100,20 @@ class AboutUsView extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 35,
-                          backgroundImage: AssetImage(member.photoAsset),
                           backgroundColor: Colors.grey[200],
+                          child: ClipOval(
+                            child: Image.asset(
+                              member.photoAsset,
+                              fit: BoxFit.cover,
+                              width: 70,
+                              height: 70,
+                              errorBuilder: (context, error, stackTrace) => const Icon(
+                                Icons.person,
+                                size: 35,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(

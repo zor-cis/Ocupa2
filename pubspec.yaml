@@ -67,7 +67,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - Images/
+    - Images/perfil.png
+    - Images/perfilBrian.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
