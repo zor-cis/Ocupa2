@@ -21,8 +21,20 @@ class ProfileView extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundImage: const AssetImage('Images/perfil.png'),
                 backgroundColor: Colors.grey[200],
+                child: ClipOval(
+                  child: Image.asset(
+                    'Images/perfil.png',
+                    fit: BoxFit.cover,
+                    width: 120,
+                    height: 120,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.person,
+                      size: 60,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 24),
               Text(

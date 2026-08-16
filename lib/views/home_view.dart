@@ -119,8 +119,12 @@ class HomeView extends StatelessWidget {
                   children: [
                     Image.asset(
                       'Images/perfil.png',
-                      width: 28,
-                      height: 28,
+                      width: 24,
+                      height: 24,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.person_pin,
+                        size: 24,
+                      ),
                     ),
                     const Text(
                       'Perfil',
