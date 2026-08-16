@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../models/application.dart';
 import '../models/offer.dart';
 import '../services/offer_service.dart';
 
@@ -7,6 +8,8 @@ class OfferProvider extends ChangeNotifier {
   final OfferService _offerService = OfferService();
 
   List<Offer> _offers = [];
+  List<Application> _myApplications = [];
+  List<Offer> _likedOffers = [];
   Offer? _selectedOffer;
 
   bool _isLoading = false;
@@ -14,6 +17,8 @@ class OfferProvider extends ChangeNotifier {
   String? _errorMessage;
 
   List<Offer> get offers => _offers;
+  List<Application> get myApplications => _myApplications;
+  List<Offer> get likedOffers => _likedOffers;
   Offer? get selectedOffer => _selectedOffer;
 
   bool get isLoading => _isLoading;
@@ -64,6 +69,40 @@ class OfferProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> loadMyApplications() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _myApplications = await _offerService.getMyApplications();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> loadLikedOffers() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _likedOffers = await _offerService.getLikedOffers();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<bool> applyToOffer(
     String id,
     String comment,
@@ -86,6 +125,24 @@ class OfferProvider extends ChangeNotifier {
       return false;
     } finally {
       _isApplying = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> unlikeOffer(String id) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _offerService.unlikeOffer(id);
+      _likedOffers.removeWhere((offer) => offer.id == id);
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }

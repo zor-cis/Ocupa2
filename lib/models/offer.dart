@@ -63,13 +63,13 @@ class Offer {
       questions: (json['questions'] as List)
           .map((question) => Question.fromJson(question))
           .toList(),
-      status: json['status'],
-      applicantsCount: json['applicantsCount'],
-      likesCount: json['likesCount'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      isIdentityRevealed: json['isIdentityRevealed'],
-      likedByMe: json['likedByMe'],
+      status: json['status'] ?? 'active',
+      applicantsCount: json['applicantsCount'] ?? 0,
+      likesCount: json['likesCount'] ?? 0,
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : DateTime.now(),
+      isIdentityRevealed: json['isIdentityRevealed'] ?? false,
+      likedByMe: json['likedByMe'] ?? false,
     );
   }
 }

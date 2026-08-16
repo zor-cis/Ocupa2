@@ -1,4 +1,4 @@
-﻿class AppRoutes {
+class AppRoutes {
   static const splash = '/';
   static const login = '/login';
   static const register = '/register';
@@ -8,7 +8,18 @@
 
   // --- Ofertas (Persona 3) ---
   static const offers = '/offers';
-  static const offerDetail = '/offer-detail';
+  static const offerDetail = '/offers/detail';
+  static const offersMap = '/offers/map';
+  static const guides = '/guides';
+  static const profile = '/profile';
+  static const myApplications = '/my-applications';
+  static const applicationDetail = '/my-applications/detail';
+  static const experiences = '/experiences';
+  static const addExperience = '/experiences/add';
+  static const experienceDetail = '/experiences/detail';
+  static const myPayments = '/my-payments';
+  static const paymentDetail = '/my-payments/detail';
+  static const likedOffers = '/liked-offers';
 
   // --- Publicar y administrar (Persona 4) ---
   static const misOfertas = '/mis-ofertas';
