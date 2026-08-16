@@ -48,6 +48,23 @@ class ExperienceProvider extends ChangeNotifier {
     }
   }
 
+  Future<String?> uploadCertificate(String base64Image) async {
+    _isAdding = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final url = await _experienceService.uploadImage(base64Image);
+      return url;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return null;
+    } finally {
+      _isAdding = false;
+      notifyListeners();
+    }
+  }
+
   Future<bool> addExperience({
     required String title,
     required String description,

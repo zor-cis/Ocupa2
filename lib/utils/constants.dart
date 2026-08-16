@@ -17,4 +17,6 @@ class ApiConstants {
   static const String experiences = '$baseUrl/me/experiences';
   static const String jobTypes = '$baseUrl/job-types';
   static const String myPayments = '$baseUrl/me/payments';
+  static const String myLikes = '$baseUrl/me/likes';
+  static const String uploads = '$baseUrl/uploads';
 }

@@ -9,6 +9,7 @@ class OfferProvider extends ChangeNotifier {
 
   List<Offer> _offers = [];
   List<Application> _myApplications = [];
+  List<Offer> _likedOffers = [];
   Offer? _selectedOffer;
 
   bool _isLoading = false;
@@ -17,6 +18,7 @@ class OfferProvider extends ChangeNotifier {
 
   List<Offer> get offers => _offers;
   List<Application> get myApplications => _myApplications;
+  List<Offer> get likedOffers => _likedOffers;
   Offer? get selectedOffer => _selectedOffer;
 
   bool get isLoading => _isLoading;
@@ -84,6 +86,23 @@ class OfferProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> loadLikedOffers() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _likedOffers = await _offerService.getLikedOffers();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<bool> applyToOffer(
     String id,
     String comment,
@@ -106,6 +125,24 @@ class OfferProvider extends ChangeNotifier {
       return false;
     } finally {
       _isApplying = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> unlikeOffer(String id) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _offerService.unlikeOffer(id);
+      _likedOffers.removeWhere((offer) => offer.id == id);
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }
