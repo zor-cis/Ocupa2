@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:convert';
 import '../providers/experience_provider.dart';
 
 class AddExperienceView extends StatefulWidget {
@@ -14,6 +17,8 @@ class _AddExperienceViewState extends State<AddExperienceView> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   String? _selectedJobTypeKey;
+  File? _selectedImage;
+  final _picker = ImagePicker();
 
   @override
   void initState() {
@@ -30,14 +35,46 @@ class _AddExperienceViewState extends State<AddExperienceView> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 85,
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     final provider = context.read<ExperienceProvider>();
+    String? certificateImageUrl;
+
+    // Subir imagen si se seleccionó una
+    if (_selectedImage != null) {
+      final bytes = await _selectedImage!.readAsBytes();
+      final base64Image = base64Encode(bytes);
+      certificateImageUrl = await provider.uploadCertificate(base64Image);
+      
+      if (certificateImageUrl == null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(provider.errorMessage ?? 'Error al subir la imagen')),
+        );
+        return;
+      }
+    }
+
     final success = await provider.addExperience(
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim(),
       jobTypeKey: _selectedJobTypeKey,
+      certificateImage: certificateImageUrl,
     );
 
     if (success && mounted) {
@@ -127,6 +164,58 @@ class _AddExperienceViewState extends State<AddExperienceView> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 20),
+                    
+                    Text('Certificado (Opcional)', style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: provider.isAdding ? null : _pickImage,
+                      child: Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.grey[100],
+                        ),
+                        child: _selectedImage != null
+                            ? Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      _selectedImage!,
+                                      width: double.infinity,
+                                      height: 150,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 8,
+                                    top: 8,
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.red,
+                                      radius: 18,
+                                      child: IconButton(
+                                        icon: const Icon(Icons.close, size: 18, color: Colors.white),
+                                        onPressed: () => setState(() => _selectedImage = null),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey),
+                                    SizedBox(height: 8),
+                                    Text('Toca para subir una foto', style: TextStyle(color: Colors.grey)),
+                                  ],
+                                ),
+                              ),
+                      ),
+                    ),
+
                     const SizedBox(height: 32),
                     ElevatedButton(
                       onPressed: provider.isAdding ? null : _submit,

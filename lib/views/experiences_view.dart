@@ -63,6 +63,13 @@ class _ExperiencesViewState extends State<ExperiencesView> {
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
                 child: ListTile(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.experienceDetail,
+                      arguments: experience,
+                    );
+                  },
                   title: Text(
                     experience.title,
                     style: const TextStyle(fontWeight: FontWeight.bold),

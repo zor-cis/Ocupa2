@@ -11,6 +11,7 @@ import 'utils/routes.dart';
 
 import 'views/add_experience_view.dart';
 import 'views/complete_profile_view.dart';
+import 'views/experience_detail_view.dart';
 import 'views/experiences_view.dart';
 import 'views/guides_view.dart';
 import 'views/home_view.dart';
@@ -18,6 +19,7 @@ import 'views/login_view.dart';
 import 'views/my_application_detail_view.dart';
 import 'views/my_applications_view.dart';
 import 'views/my_payments_view.dart';
+import 'views/liked_offers_view.dart';
 import 'views/payment_detail_view.dart';
 import 'views/offer_detail_view.dart';
 import 'views/offers_map_view.dart';
@@ -82,8 +84,10 @@ class MyApp extends StatelessWidget {
           AppRoutes.applicationDetail: (_) => const MyApplicationDetailView(),
           AppRoutes.experiences: (_) => const ExperiencesView(),
           AppRoutes.addExperience: (_) => const AddExperienceView(),
+          AppRoutes.experienceDetail: (_) => const ExperienceDetailView(),
           AppRoutes.myPayments: (_) => const MyPaymentsView(),
           AppRoutes.paymentDetail: (_) => const PaymentDetailView(),
+          AppRoutes.likedOffers: (_) => const LikedOffersView(),
         },
       ),
     );

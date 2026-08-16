@@ -15,6 +15,8 @@ class AppRoutes {
   static const applicationDetail = '/my-applications/detail';
   static const experiences = '/experiences';
   static const addExperience = '/experiences/add';
+  static const experienceDetail = '/experiences/detail';
   static const myPayments = '/my-payments';
   static const paymentDetail = '/my-payments/detail';
+  static const likedOffers = '/liked-offers';
 }

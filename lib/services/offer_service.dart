@@ -91,6 +91,21 @@ class OfferService {
     }
   }
 
+  Future<void> unlikeOffer(String id) async {
+    final token = await _getToken();
+
+    final response = await http.delete(
+      Uri.parse(ApiConstants.applyToOffer(id).replaceAll('/apply', '/like')),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception(_errorMessage(response));
+    }
+  }
+
   Future<List<Application>> getMyApplications() async {
     final token = await _getToken();
 
@@ -114,6 +129,32 @@ class OfferService {
 
     return (data as List)
         .map((item) => Application.fromJson(item))
+        .toList();
+  }
+
+  Future<List<Offer>> getLikedOffers() async {
+    final token = await _getToken();
+
+    final response = await http.get(
+      Uri.parse(ApiConstants.myLikes),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception(_errorMessage(response));
+    }
+
+    final json = jsonDecode(response.body);
+    final data = json['data'];
+
+    if (data == null) {
+      return [];
+    }
+
+    return (data as List)
+        .map((item) => Offer.fromJson(item))
         .toList();
   }
 

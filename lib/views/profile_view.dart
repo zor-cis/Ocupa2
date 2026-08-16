@@ -67,6 +67,15 @@ class ProfileView extends StatelessWidget {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.favorite_outline),
+                title: const Text('Mis me gusta'),
+                subtitle: const Text('Ofertas que me han interesado'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pushNamed(context, '/liked-offers');
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.person_outline),
                 title: const Text('Datos Personales'),
                 onTap: () {

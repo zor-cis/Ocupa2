@@ -27,6 +27,27 @@ class ExperienceService {
         .toList();
   }
 
+  Future<String> uploadImage(String base64Image) async {
+    final token = await _getToken();
+    final response = await http.post(
+      Uri.parse(ApiConstants.uploads),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'image': base64Image,
+      }),
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception(_errorMessage(response));
+    }
+
+    final json = jsonDecode(response.body);
+    return json['data']['url'];
+  }
+
   Future<List<Experience>> getExperiences() async {
     final token = await _getToken();
     final response = await http.get(
