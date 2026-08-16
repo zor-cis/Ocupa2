@@ -8,6 +8,8 @@ class AppRoutes {
 
   static const offers = '/offers';
   static const offerDetail = '/offers/detail';
+  static const misOfertas = '/mis-ofertas';
+  static const misPagos = '/mis-pagos';
   static const offersMap = '/offers/map';
   static const guides = '/guides';
   static const profile = '/profile';
