@@ -14,22 +14,6 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ocupa2'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await context.read<AuthProvider>().logout();
-
-              if (context.mounted) {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  AppRoutes.login,
-                  (route) => false,
-                );
-              }
-            },
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),

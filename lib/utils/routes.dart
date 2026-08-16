@@ -19,4 +19,6 @@ class AppRoutes {
   static const myPayments = '/my-payments';
   static const paymentDetail = '/my-payments/detail';
   static const likedOffers = '/liked-offers';
+  static const personalData = '/profile/personal-data';
+  static const changePassword = '/profile/change-password';
 }

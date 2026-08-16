@@ -24,6 +24,8 @@ import 'views/payment_detail_view.dart';
 import 'views/offer_detail_view.dart';
 import 'views/offers_map_view.dart';
 import 'views/offers_view.dart';
+import 'views/personal_data_view.dart';
+import 'views/change_password_view.dart';
 import 'views/profile_view.dart';
 import 'views/recover_password_view.dart';
 import 'views/register_view.dart';
@@ -88,6 +90,8 @@ class MyApp extends StatelessWidget {
           AppRoutes.myPayments: (_) => const MyPaymentsView(),
           AppRoutes.paymentDetail: (_) => const PaymentDetailView(),
           AppRoutes.likedOffers: (_) => const LikedOffersView(),
+          AppRoutes.personalData: (_) => const PersonalDataView(),
+          AppRoutes.changePassword: (_) => const ChangePasswordView(),
         },
       ),
     );
