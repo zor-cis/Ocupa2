@@ -27,6 +27,7 @@ import 'views/offers_view.dart';
 import 'views/personal_data_view.dart';
 import 'views/change_password_view.dart';
 import 'views/profile_view.dart';
+import 'views/settings_view.dart';
 import 'views/recover_password_view.dart';
 import 'views/register_view.dart';
 import 'views/splash_view.dart';
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.likedOffers: (_) => const LikedOffersView(),
           AppRoutes.personalData: (_) => const PersonalDataView(),
           AppRoutes.changePassword: (_) => const ChangePasswordView(),
+          AppRoutes.settings: (_) => const SettingsView(),
         },
       ),
     );

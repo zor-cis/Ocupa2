@@ -21,4 +21,5 @@ class AppRoutes {
   static const likedOffers = '/liked-offers';
   static const personalData = '/profile/personal-data';
   static const changePassword = '/profile/change-password';
+  static const settings = '/profile/settings';
 }

@@ -85,7 +85,9 @@ class ProfileView extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.settings_outlined),
                 title: const Text('Configuración'),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.settings);
+                },
               ),
               const SizedBox(height: 24),
               const Divider(),

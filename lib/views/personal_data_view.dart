@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/auth_provider.dart';
-import '../utils/routes.dart';
 
 class PersonalDataView extends StatelessWidget {
   const PersonalDataView({super.key});
@@ -56,19 +55,6 @@ class PersonalDataView extends StatelessWidget {
                         ? DateFormat('dd/MM/yyyy').format(user.birthDate!)
                         : 'No especificada',
                     icon: Icons.cake_outlined,
-                  ),
-                  const SizedBox(height: 40),
-                  const Divider(),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.changePassword);
-                    },
-                    icon: const Icon(Icons.lock_outline),
-                    label: const Text('Cambiar Contraseña'),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
                   ),
                 ],
               ),
