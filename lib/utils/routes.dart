@@ -6,9 +6,10 @@ class AppRoutes {
   static const completeProfile = '/complete-profile';
   static const home = '/home';
 
-  // --- Ofertas (Persona 3) ---
   static const offers = '/offers';
   static const offerDetail = '/offers/detail';
+  static const misOfertas = '/mis-ofertas';
+  static const misPagos = '/mis-pagos';
   static const offersMap = '/offers/map';
   static const guides = '/guides';
   static const profile = '/profile';
@@ -20,9 +21,9 @@ class AppRoutes {
   static const myPayments = '/my-payments';
   static const paymentDetail = '/my-payments/detail';
   static const likedOffers = '/liked-offers';
-
-  // --- Publicar y administrar (Persona 4) ---
-  static const misOfertas = '/mis-ofertas';
-  static const publicarOferta = '/publicar-oferta';
-  static const misPagos = '/mis-pagos';
+  static const personalData = '/profile/personal-data';
+  static const changePassword = '/profile/change-password';
+  static const settings = '/profile/settings';
+  static const aboutUs = '/profile/about-us';
+  static const editProfile = '/profile/edit';
 }

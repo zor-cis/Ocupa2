@@ -27,8 +27,7 @@ class ApiConstants {
   static String oferta(String id) => offerDetail(id);
   static String desactivarOferta(String id) => '$offers/$id/deactivate';
   static String aplicantesDeOferta(String id) => '$offers/$id/applications';
-  // TODO: no aparece en el Swagger. Preguntar al profesor si existe.
-  static String elegirGanador(String id) => '$offers/$id/winner';
+  static String actualizarAplicacion(String applicationId) => '$baseUrl/applications/$applicationId';
   // --- Pagos (Persona 4) ---
   static const String pagos = '$baseUrl/payments';
   static const String misPagos = '$baseUrl/me/payments';

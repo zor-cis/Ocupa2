@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../utils/routes.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -13,16 +14,27 @@ class ProfileView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Mi Perfil'),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundImage: const AssetImage('images/perfil.png'),
                 backgroundColor: Colors.grey[200],
+                child: ClipOval(
+                  child: Image.asset(
+                    'Images/perfil.png',
+                    fit: BoxFit.cover,
+                    width: 120,
+                    height: 120,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.person,
+                      size: 60,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 24),
               Text(
@@ -39,6 +51,15 @@ class ProfileView extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               const Divider(),
+              ListTile(
+                leading: const Icon(Icons.list_alt_outlined),
+                title: const Text('Mis ofertas'),
+                subtitle: const Text('Gestionar las vacantes que he publicado'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.misOfertas);
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.work_history_outlined),
                 title: const Text('Mis aplicaciones'),
@@ -79,18 +100,68 @@ class ProfileView extends StatelessWidget {
                 leading: const Icon(Icons.person_outline),
                 title: const Text('Datos Personales'),
                 onTap: () {
-                  // Navegar a edición de perfil si fuera necesario
+                  Navigator.pushNamed(context, AppRoutes.personalData);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.settings_outlined),
                 title: const Text('Configuración'),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.settings);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('Acerca de nosotros'),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.aboutUs);
+                },
+              ),
+              const SizedBox(height: 24),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: const Text(
+                  'Cerrar sesión',
+                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+                onTap: () => _confirmLogout(context),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _confirmLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cerrar sesión'),
+        content: const Text('¿Estás seguro de que deseas salir de tu cuenta?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Cerrar sesión', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      await context.read<AuthProvider>().logout();
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/login',
+          (route) => false,
+        );
+      }
+    }
   }
 }

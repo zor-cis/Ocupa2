@@ -115,9 +115,23 @@ class _OfferDetailViewState extends State<OfferDetailView> {
   Widget build(BuildContext context) {
     final provider = context.watch<OfferProvider>();
 
+    final offer = provider.selectedOffer;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detalle de oferta'),
+        actions: [
+          if (offer != null)
+            IconButton(
+              icon: Icon(
+                offer.likedByMe ? Icons.favorite : Icons.favorite_border,
+                color: offer.likedByMe ? Colors.red : null,
+              ),
+              onPressed: () {
+                provider.toggleLike(offer.id);
+              },
+            ),
+        ],
       ),
       body: _buildBody(provider),
     );
@@ -209,6 +223,26 @@ class _OfferDetailViewState extends State<OfferDetailView> {
             label: 'Pago',
             value:
                 '${offer.payment.amount} ${offer.payment.currency} / ${offer.payment.period}',
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            children: [
+              const Icon(Icons.favorite, color: Colors.red, size: 20),
+              const SizedBox(width: 6),
+              Text(
+                '${offer.likesCount} me gusta',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(width: 24),
+              const Icon(Icons.people, color: Colors.blue, size: 20),
+              const SizedBox(width: 6),
+              Text(
+                '${offer.applicantsCount} aplicantes',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ],
           ),
 
           const SizedBox(height: 24),

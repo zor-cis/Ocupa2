@@ -91,6 +91,21 @@ class OfferService {
     }
   }
 
+  Future<void> likeOffer(String id) async {
+    final token = await _getToken();
+
+    final response = await http.post(
+      Uri.parse(ApiConstants.applyToOffer(id).replaceAll('/apply', '/like')),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception(_errorMessage(response));
+    }
+  }
+
   Future<void> unlikeOffer(String id) async {
     final token = await _getToken();
 

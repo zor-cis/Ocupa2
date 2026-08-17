@@ -108,7 +108,7 @@ class _ExperiencesViewState extends State<ExperiencesView> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               offset: const Offset(0, -2),
               blurRadius: 10,
             ),
@@ -148,7 +148,9 @@ class _ExperiencesViewState extends State<ExperiencesView> {
     );
 
     if (confirmed == true && mounted) {
-      context.read<ExperienceProvider>().deleteExperience(id);
+      if (!context.mounted) return;
+      final experienceProvider = Provider.of<ExperienceProvider>(context, listen: false);
+      experienceProvider.deleteExperience(id);
     }
   }
 }

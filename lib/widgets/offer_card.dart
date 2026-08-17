@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/offer_provider.dart';
 
 import '../models/offer.dart';
 
@@ -114,19 +116,54 @@ class OfferCard extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  const Align(
+                  Align(
                     alignment: Alignment.centerRight,
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Ver detalles',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                offer.likedByMe ? Icons.favorite : Icons.favorite_border,
+                                color: offer.likedByMe ? Colors.red : null,
+                              ),
+                              onPressed: () {
+                                context.read<OfferProvider>().toggleLike(offer.id);
+                              },
+                            ),
+                            Text(
+                              '${offer.likesCount}',
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Icon(Icons.people_outline, size: 20, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${offer.applicantsCount}',
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 4),
-                        Icon(Icons.arrow_forward),
+                        const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Ver detalles',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(Icons.arrow_forward),
+                          ],
+                        ),
                       ],
                     ),
                   ),

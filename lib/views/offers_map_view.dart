@@ -43,7 +43,8 @@ class _OffersMapViewState extends State<OffersMapView> {
     try {
       await _getCurrentLocation();
       if (!mounted) return;
-      await context.read<OfferProvider>().loadOffers();
+      final offerProvider = Provider.of<OfferProvider>(context, listen: false);
+      await offerProvider.loadOffers();
       if (!mounted) return;
       _createMarkers();
     } catch (e) {
@@ -96,9 +97,6 @@ class _OffersMapViewState extends State<OffersMapView> {
       final Set<Marker> newMarkers = {};
 
       for (final offer in offers) {
-        // Validación de datos nulos de la oferta
-        if (offer.id == null || offer.location == null) continue;
-
         double distance = 0;
         if (_currentPosition != null) {
           distance = _calculateDistance(
@@ -116,8 +114,8 @@ class _OffersMapViewState extends State<OffersMapView> {
               markerId: MarkerId(offer.id.toString()),
               position: LatLng(offer.location.lat, offer.location.lng),
               infoWindow: InfoWindow(
-                title: offer.jobTypeName ?? 'Oferta',
-                snippet: '${offer.payment?.amount ?? 0} ${offer.payment?.currency ?? 'DOP'}',
+                title: offer.jobTypeName,
+                snippet: '${offer.payment.amount} ${offer.payment.currency}',
                 onTap: () {
                   Navigator.pushNamed(
                     context,
@@ -217,7 +215,7 @@ class _OffersMapViewState extends State<OffersMapView> {
             ),
           if (_isLoading)
             Container(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -237,7 +235,7 @@ class _OffersMapViewState extends State<OffersMapView> {
               left: 20,
               right: 20,
               child: Card(
-                color: Colors.blue.withOpacity(0.9),
+                color: Colors.blue.withValues(alpha: 0.9),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(

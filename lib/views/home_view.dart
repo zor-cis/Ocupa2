@@ -14,90 +14,59 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ocupa2'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await context.read<AuthProvider>().logout();
-              if (context.mounted) {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  AppRoutes.login,
-                  (route) => false,
-                );
-              }
-            },
-          ),
-        ],
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Bienvenido/a${user?.firstName != null ? ', ${user!.firstName}' : ''}!',
+              '¡Bienvenido/a${user?.firstName != null ? ', ${user!.firstName}' : ''}!',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
+
             const SizedBox(height: 8),
+
             const Text(
               'Encuentra oportunidades de trabajo que se adapten a ti.',
             ),
+
             const SizedBox(height: 32),
 
-            // --- Buscar trabajo (Persona 3) ---
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    const Icon(Icons.work_outline, size: 48),
+                    const Icon(
+                      Icons.work_outline,
+                      size: 48,
+                    ),
+
                     const SizedBox(height: 12),
+
                     Text(
                       'Ofertas de empleo',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
+
                     const SizedBox(height: 8),
+
                     const Text(
                       'Explora las ofertas disponibles y encuentra una oportunidad para ti.',
                       textAlign: TextAlign.center,
                     ),
+
                     const SizedBox(height: 16),
+
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.offers);
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.offers,
+                        );
                       },
                       child: const Text('Explorar ofertas'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // --- Publicar trabajo (Persona 4) ---
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    const Icon(Icons.campaign_outlined, size: 48),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Publicar un trabajo',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Publica una oferta y elige entre quienes apliquen.',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.misOfertas);
-                      },
-                      child: const Text('Mis ofertas'),
                     ),
                   ],
                 ),
@@ -149,9 +118,13 @@ class HomeView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
-                      'images/perfil.png',
-                      width: 28,
-                      height: 28,
+                      'Images/perfil.png',
+                      width: 24,
+                      height: 24,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.person_pin,
+                        size: 24,
+                      ),
                     ),
                     const Text(
                       'Perfil',

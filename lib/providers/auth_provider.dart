@@ -56,6 +56,10 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
+  Future<bool> changePassword(String newPassword) {
+    return _handle(() => _authService.changePassword(newPassword));
+  }
+
   Future<void> loadSession() async {
     currentUser = await _authService.getCurrentUser();
     notifyListeners();
