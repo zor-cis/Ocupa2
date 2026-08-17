@@ -163,7 +163,7 @@ class OfertasProvider extends ChangeNotifier {
 
   Future<bool> elegirGanador(String ofertaId, String aplicacionId) async {
     try {
-      await _service.elegirGanador(ofertaId, aplicacionId);
+      await _service.elegirGanador(aplicacionId);
       await cargarAplicantes(ofertaId);
       return true;
     } catch (e) {

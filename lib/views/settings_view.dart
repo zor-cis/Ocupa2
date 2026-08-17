@@ -15,6 +15,26 @@ class SettingsView extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
+              'Cuenta',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text('Editar Perfil'),
+            leading: const Icon(Icons.person_outline),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.editProfile);
+            },
+          ),
+          const Divider(),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
               'Seguridad',
               style: TextStyle(
                 fontSize: 14,

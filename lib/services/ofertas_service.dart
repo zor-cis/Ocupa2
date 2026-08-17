@@ -7,12 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/oferta_model.dart';
 import '../utils/constants.dart';
 
-/// Módulo 4: publicar, pagar, mis ofertas, aplicantes.
-///
-/// Flujo real de publicación (confirmado en Swagger):
-///   1. subirFoto()      -> URL de la imagen
-///   2. cobrarTarjeta()  -> paymentId aprobado
-///   3. crearOferta()    -> usa ambos
 class OfertasService {
   // ---------- Helpers ----------
 
@@ -47,7 +41,13 @@ class OfertasService {
   List<Map<String, dynamic>> _comoLista(dynamic data) {
     if (data is List) return data.cast<Map<String, dynamic>>();
     if (data is Map<String, dynamic>) {
-      for (final clave in ['items', 'offers', 'applications', 'payments', 'results']) {
+      for (final clave in [
+        'items',
+        'offers',
+        'applications',
+        'payments',
+        'results',
+      ]) {
         final v = data[clave];
         if (v is List) return v.cast<Map<String, dynamic>>();
       }
@@ -58,13 +58,14 @@ class OfertasService {
   // ---------- Catálogo ----------
 
   Future<List<JobTypeModel>> jobTypes() async {
-    final response =
-        await http.get(Uri.parse(ApiConstants.jobTypes), headers: await _headers());
+    final response = await http.get(
+      Uri.parse(ApiConstants.jobTypes),
+      headers: await _headers(),
+    );
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body)))
-        .map(JobTypeModel.fromJson)
-        .where((t) => t.active)
-        .toList();
+    return _comoLista(
+      _unwrap(jsonDecode(response.body)),
+    ).map(JobTypeModel.fromJson).where((t) => t.active).toList();
   }
 
   // ---------- Paso 1: subir foto ----------
@@ -113,12 +114,14 @@ class OfertasService {
   }
 
   Future<List<PagoModel>> misPagos() async {
-    final response =
-        await http.get(Uri.parse(ApiConstants.misPagos), headers: await _headers());
+    final response = await http.get(
+      Uri.parse(ApiConstants.misPagos),
+      headers: await _headers(),
+    );
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body)))
-        .map(PagoModel.fromJson)
-        .toList();
+    return _comoLista(
+      _unwrap(jsonDecode(response.body)),
+    ).map(PagoModel.fromJson).toList();
   }
 
   // ---------- Paso 3: crear la oferta ----------
@@ -149,7 +152,8 @@ class OfertasService {
         'paymentId': paymentId,
         'payment': {'amount': amount, 'currency': currency},
         if (lat != null && lng != null) 'location': {'lat': lat, 'lng': lng},
-        if (deadline != null) 'deadline': deadline.toIso8601String().split('T').first,
+        if (deadline != null)
+          'deadline': deadline.toIso8601String().split('T').first,
         if (customAnswers != null && customAnswers.isNotEmpty)
           'customAnswers': customAnswers,
       }),
@@ -162,12 +166,14 @@ class OfertasService {
   // ---------- Mis ofertas ----------
 
   Future<List<OfertaModel>> misOfertas() async {
-    final response =
-        await http.get(Uri.parse(ApiConstants.misOfertas), headers: await _headers());
+    final response = await http.get(
+      Uri.parse(ApiConstants.misOfertas),
+      headers: await _headers(),
+    );
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body)))
-        .map(OfertaModel.fromJson)
-        .toList();
+    return _comoLista(
+      _unwrap(jsonDecode(response.body)),
+    ).map(OfertaModel.fromJson).toList();
   }
 
   Future<List<AplicacionModel>> aplicantes(String ofertaId) async {
@@ -176,9 +182,9 @@ class OfertasService {
       headers: await _headers(),
     );
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
-    return _comoLista(_unwrap(jsonDecode(response.body)))
-        .map(AplicacionModel.fromJson)
-        .toList();
+    return _comoLista(
+      _unwrap(jsonDecode(response.body)),
+    ).map(AplicacionModel.fromJson).toList();
   }
 
   Future<void> desactivarOferta(String ofertaId) async {
@@ -189,12 +195,11 @@ class OfertasService {
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
   }
 
-  // TODO: el endpoint no aparece en el Swagger. Confirmar con el profesor.
-  Future<void> elegirGanador(String ofertaId, String aplicacionId) async {
-    final response = await http.post(
-      Uri.parse(ApiConstants.elegirGanador(ofertaId)),
+  Future<void> elegirGanador(String aplicacionId) async {
+    final response = await http.patch(
+      Uri.parse(ApiConstants.actualizarAplicacion(aplicacionId)),
       headers: await _headers(),
-      body: jsonEncode({'applicationId': aplicacionId}),
+      body: jsonEncode({'status': 'winner'}),
     );
     if (response.statusCode >= 400) throw Exception(_errorMessage(response));
   }
