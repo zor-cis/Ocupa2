@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../models/application.dart';
+import '../models/job_type.dart';
 import '../models/offer.dart';
 import '../services/offer_service.dart';
 
@@ -10,7 +11,9 @@ class OfferProvider extends ChangeNotifier {
   List<Offer> _offers = [];
   List<Application> _myApplications = [];
   List<Offer> _likedOffers = [];
+  List<JobType> _jobTypes = [];
   Offer? _selectedOffer;
+  String? _currentJobTypeKey;
 
   bool _isLoading = false;
   bool _isApplying = false;
@@ -19,12 +22,29 @@ class OfferProvider extends ChangeNotifier {
   List<Offer> get offers => _offers;
   List<Application> get myApplications => _myApplications;
   List<Offer> get likedOffers => _likedOffers;
+  List<JobType> get jobTypes => _jobTypes;
   Offer? get selectedOffer => _selectedOffer;
+  String? get currentJobTypeKey => _currentJobTypeKey;
 
   bool get isLoading => _isLoading;
   bool get isApplying => _isApplying;
 
   String? get errorMessage => _errorMessage;
+
+  Future<void> loadJobTypes() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _jobTypes = await _offerService.getJobTypes();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<bool> loadOffers({
     String? jobTypeKey,
@@ -32,11 +52,12 @@ class OfferProvider extends ChangeNotifier {
   }) async {
     _isLoading = true;
     _errorMessage = null;
+    _currentJobTypeKey = jobTypeKey;
     notifyListeners();
 
     try {
       _offers = await _offerService.getOffers(
-        jobTypeKey: jobTypeKey,
+        jobTypeKey: _currentJobTypeKey,
         contractType: contractType,
       );
 

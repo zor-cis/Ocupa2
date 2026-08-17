@@ -6,7 +6,7 @@
     <application
         android:label="ocupa2_app"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
 
         <!-- Configuración de Google Maps API Key -->
         <meta-data

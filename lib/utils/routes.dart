@@ -26,4 +26,6 @@ class AppRoutes {
   static const settings = '/profile/settings';
   static const aboutUs = '/profile/about-us';
   static const editProfile = '/profile/edit';
+  static const newsDetail = '/news/detail';
+
 }

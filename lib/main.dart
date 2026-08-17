@@ -6,6 +6,7 @@ import 'providers/ofertas_provider.dart';
 import 'providers/video_provider.dart';
 import 'providers/experience_provider.dart';
 import 'providers/payment_provider.dart';
+import 'providers/news_provider.dart';
 import 'utils/routes.dart';
 import 'views/add_experience_view.dart';
 import 'views/about_us_view.dart';
@@ -18,6 +19,7 @@ import 'views/home_view.dart';
 import 'views/login_view.dart';
 import 'views/mis_ofertas_view.dart';
 import 'views/mis_pagos_view.dart';
+import 'views/news_detail_view.dart';
 import 'views/my_application_detail_view.dart';
 import 'views/my_applications_view.dart';
 import 'views/my_payments_view.dart';
@@ -62,6 +64,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => PaymentProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => NewsProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'Ocupa2',
@@ -102,6 +107,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.changePassword: (_) => const ChangePasswordView(),
           AppRoutes.settings: (_) => const SettingsView(),
           AppRoutes.aboutUs: (_) => const AboutUsView(),
+          AppRoutes.newsDetail: (_) => const NewsDetailView(),
         },
       ),
     );
