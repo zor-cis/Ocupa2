@@ -45,7 +45,7 @@ class AboutUsView extends StatelessWidget {
         photoAsset: 'Images/perfil.png',
       ),
       TeamMember(
-        name: 'Zorcis Calderon',
+        name: 'Zorcis Estefani Calderon Mejia',
         id: '2024-1832',
         phone: '+18095137658',
         telegram: 'https://t.me/Zorc__',
