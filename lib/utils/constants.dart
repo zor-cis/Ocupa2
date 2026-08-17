@@ -38,4 +38,7 @@ class ApiConstants {
   /// Tarjetas de prueba de la pasarela simulada.
   static const String tarjetaAprobada = '4242424242424242';
   static const String tarjetaRechazada = '4000000000000002';
+
+  // --- Noticias ---
+  static const String news = '$baseUrl/news';
 }
