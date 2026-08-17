@@ -125,7 +125,8 @@ class OfertaModel {
           ? null
           : DateTime.tryParse(json['deadline'].toString()),
       status: json['status']?.toString(),
-      totalApplications: _aInt(json['applicationsCount'] ??
+      totalApplications: _aInt(json['applicantsCount'] ??
+          json['applicationsCount'] ??
           json['totalApplications'] ??
           json['applications']),
       createdAt: json['createdAt'] == null

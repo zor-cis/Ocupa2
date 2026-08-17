@@ -10,6 +10,7 @@ import 'utils/routes.dart';
 import 'views/add_experience_view.dart';
 import 'views/about_us_view.dart';
 import 'views/complete_profile_view.dart';
+import 'views/edit_profile_view.dart';
 import 'views/experience_detail_view.dart';
 import 'views/experiences_view.dart';
 import 'views/guides_view.dart';
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.register: (_) => const RegisterView(),
           AppRoutes.recoverPassword: (_) => const RecoverPasswordView(),
           AppRoutes.completeProfile: (_) => const CompleteProfileView(),
+          AppRoutes.editProfile: (_) => const EditProfileView(),
           AppRoutes.home: (_) => const HomeView(),
           // Ofertas (Persona 3)
           AppRoutes.offers: (_) => const OffersView(),

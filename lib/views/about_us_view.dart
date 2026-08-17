@@ -22,7 +22,6 @@ class AboutUsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final List<TeamMember> team = [
       TeamMember(
         name: 'Brian Alexander Tavarez Duarte',
@@ -32,11 +31,11 @@ class AboutUsView extends StatelessWidget {
         photoAsset: 'Images/perfilBrian.png',
       ),
       TeamMember(
-        name: 'Nombre Integrante 2',
-        id: '2023-XXXX',
-        phone: '+18090000002',
-        telegram: 'https://t.me/username2',
-        photoAsset: 'Images/perfil.png',
+        name: 'Jean Carlos Mendoza',
+        id: '2024-1487',
+        phone: '+18294411404',
+        telegram: 'https://t.me/Jean_Trader_FX',
+        photoAsset: 'Images/Photo.jpg',
       ),
       TeamMember(
         name: 'Nombre Integrante 3',
@@ -62,19 +61,14 @@ class AboutUsView extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Acerca de nosotros'),
-      ),
+      appBar: AppBar(title: const Text('Acerca de nosotros')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             const Text(
               'Equipo de Desarrollo',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -107,11 +101,12 @@ class AboutUsView extends StatelessWidget {
                               fit: BoxFit.cover,
                               width: 70,
                               height: 70,
-                              errorBuilder: (context, error, stackTrace) => const Icon(
-                                Icons.person,
-                                size: 35,
-                                color: Colors.grey,
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                    Icons.person,
+                                    size: 35,
+                                    color: Colors.grey,
+                                  ),
                             ),
                           ),
                         ),
