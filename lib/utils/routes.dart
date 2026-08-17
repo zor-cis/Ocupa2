@@ -4,5 +4,6 @@ class AppRoutes {
   static const register = '/register';
   static const recoverPassword = '/recover-password';
   static const completeProfile = '/complete-profile';
+  static const editProfile = '/edit-profile';
   static const home = '/home';
 }

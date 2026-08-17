@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'views/edit_profile_view.dart';
 import 'providers/auth_provider.dart';
 import 'utils/routes.dart';
 import 'views/complete_profile_view.dart';
@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.register: (_) => const RegisterView(),
           AppRoutes.recoverPassword: (_) => const RecoverPasswordView(),
           AppRoutes.completeProfile: (_) => const CompleteProfileView(),
+          AppRoutes.editProfile: (_) => const EditProfileView(),
           AppRoutes.home: (_) => const HomeView(),
         },
       ),
