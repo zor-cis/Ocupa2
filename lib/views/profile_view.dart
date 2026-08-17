@@ -52,6 +52,15 @@ class ProfileView extends StatelessWidget {
               const SizedBox(height: 40),
               const Divider(),
               ListTile(
+                leading: const Icon(Icons.list_alt_outlined),
+                title: const Text('Mis ofertas'),
+                subtitle: const Text('Gestionar las vacantes que he publicado'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.misOfertas);
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.work_history_outlined),
                 title: const Text('Mis aplicaciones'),
                 subtitle: const Text('Ver vacantes a las que he aplicado'),
