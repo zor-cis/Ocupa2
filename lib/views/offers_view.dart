@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/offer_provider.dart';
 import '../utils/routes.dart';
 import '../widgets/offer_card.dart';
+import 'publicar_oferta_view.dart';
 
 class OffersView extends StatefulWidget {
   const OffersView({super.key});
@@ -31,6 +32,19 @@ class _OffersViewState extends State<OffersView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Explorar ofertas'),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final creada = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(builder: (_) => const PublicarOfertaView()),
+          );
+          if (creada == true && mounted) {
+            context.read<OfferProvider>().loadOffers();
+          }
+        },
+        icon: const Icon(Icons.add),
+        label: const Text('Publicar'),
       ),
       body: Column(
         children: [
