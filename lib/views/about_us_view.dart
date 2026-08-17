@@ -45,11 +45,11 @@ class AboutUsView extends StatelessWidget {
         photoAsset: 'Images/perfil.png',
       ),
       TeamMember(
-        name: 'Nombre Integrante 4',
-        id: '2023-XXXX',
-        phone: '+18090000004',
-        telegram: 'https://t.me/username4',
-        photoAsset: 'Images/perfil.png',
+        name: 'Zorcis Estefani Calderon Mejia',
+        id: '2024-1832',
+        phone: '+18095137658',
+        telegram: 'https://t.me/Zorc__',
+        photoAsset: 'Images/perfilZorcis.jpeg',
       ),
       TeamMember(
         name: 'Nombre Integrante 5',
