@@ -37,12 +37,12 @@ class AboutUsView extends StatelessWidget {
         telegram: 'https://t.me/Jean_Trader_FX',
         photoAsset: 'Images/Photo.jpg',
       ),
-      TeamMember(
-        name: 'Nombre Integrante 3',
-        id: '2023-XXXX',
-        phone: '+18090000003',
-        telegram: 'https://t.me/username3',
-        photoAsset: 'Images/perfil.png',
+       TeamMember(
+        name: 'Jose Arturo Dominguez Suriel',
+        id: '2023-0249',
+        phone: '+18098277590',
+        telegram: 'https://t.me/jose_arturo',
+        photoAsset: 'Images/joseperfil.jpg',
       ),
       TeamMember(
         name: 'Nombre Integrante 4',
