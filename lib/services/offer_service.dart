@@ -4,10 +4,32 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/application.dart';
+import '../models/job_type.dart';
 import '../models/offer.dart';
 import '../utils/constants.dart';
 
 class OfferService {
+  Future<List<JobType>> getJobTypes() async {
+    final token = await _getToken();
+    final response = await http.get(
+      Uri.parse(ApiConstants.jobTypes),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception(_errorMessage(response));
+    }
+
+    final json = jsonDecode(response.body);
+    final data = json['data'];
+
+    if (data == null) return [];
+
+    return (data as List)
+        .map((item) => JobType.fromJson(item))
+        .toList();
+  }
+
   Future<List<Offer>> getOffers({
     String? jobTypeKey,
     String? contractType,

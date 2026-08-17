@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// import 'package:url_launcher/url_launcher.dart'; // Add this to pubspec if needed
+import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/video_provider.dart';
 
@@ -99,10 +99,7 @@ class _GuidesViewState extends State<GuidesView> {
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
                             onPressed: () {
-                              // ScaffoldMessenger.of(context).showSnackBar(
-                              //   SnackBar(content: Text('Abriendo: ${video.url}')),
-                              // );
-                              // _launchURL(video.url);
+                              _launchURL(video.url);
                             },
                             icon: const Icon(Icons.play_arrow),
                             label: const Text('Ver video'),
@@ -120,16 +117,22 @@ class _GuidesViewState extends State<GuidesView> {
     );
   }
 
-  // Future<void> _launchURL(String url) async {
-  //   final uri = Uri.parse(url);
-  //   if (await canLaunchUrl(uri)) {
-  //     await launchUrl(uri);
-  //   } else {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('No se pudo abrir el video')),
-  //       );
-  //     }
-  //   }
-  // }
+  Future<void> _launchURL(String url) async {
+    final uri = Uri.parse(url);
+    try {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No se pudo abrir el video')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al intentar abrir el video')),
+        );
+      }
+    }
+  }
 }

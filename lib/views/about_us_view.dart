@@ -52,11 +52,11 @@ class AboutUsView extends StatelessWidget {
         photoAsset: 'Images/perfilZorcis.jpeg',
       ),
       TeamMember(
-        name: 'Nombre Integrante 5',
-        id: '2023-XXXX',
-        phone: '+18090000005',
-        telegram: 'https://t.me/username5',
-        photoAsset: 'Images/perfil.png',
+        name: 'Nicandro De Los Santos',
+        id: '2023-1814',
+        phone: '+18292197676',
+        telegram: 'https://t.me/tuchikofav',
+        photoAsset: 'Images/perfilNicandro.jpeg',
       ),
     ];
 

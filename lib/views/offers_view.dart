@@ -18,7 +18,9 @@ class _OffersViewState extends State<OffersView> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<OfferProvider>().loadOffers();
+      final provider = context.read<OfferProvider>();
+      provider.loadJobTypes();
+      provider.loadOffers();
     });
   }
 
@@ -30,7 +32,49 @@ class _OffersViewState extends State<OffersView> {
       appBar: AppBar(
         title: const Text('Explorar ofertas'),
       ),
-      body: _buildBody(offersProvider),
+      body: Column(
+        children: [
+          _buildFilter(offersProvider),
+          Expanded(child: _buildBody(offersProvider)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilter(OfferProvider provider) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: Colors.grey[100],
+      child: Row(
+        children: [
+          const Icon(Icons.filter_list, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String?>(
+                value: provider.currentJobTypeKey,
+                hint: const Text('Filtrar por tipo de empleo'),
+                isExpanded: true,
+                items: [
+                  const DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text('Todos los empleos'),
+                  ),
+                  ...provider.jobTypes.map((type) {
+                    return DropdownMenuItem<String?>(
+                      value: type.key,
+                      child: Text(type.name),
+                    );
+                  }),
+                ],
+                onChanged: (String? newValue) {
+                  provider.loadOffers(jobTypeKey: newValue);
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -60,7 +104,7 @@ class _OffersViewState extends State<OffersView> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  provider.loadOffers();
+                  provider.loadOffers(jobTypeKey: provider.currentJobTypeKey);
                 },
                 child: const Text('Reintentar'),
               ),
